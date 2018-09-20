@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build index.html --public-url='/search-playground/'"
+    "build": "parcel build index.html --no-minify --public-url='/search-playground/'"
   },
   "dependencies": {
     "@vue/component-compiler-utils": "^1.3.1",
