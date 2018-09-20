@@ -1,0 +1,4 @@
+_site/
+dist/
+node_modules/
+.cache/
