@@ -597,13 +597,9 @@ window.onload = () => {
             },
             typeClick: function(e) {
                 let type = e.target.getAttribute('type');
-                console.log(type);
-                console.log(this.cnf.typeToggle[type]);
                 this.cnf.typeToggle[type] = !this.cnf.typeToggle[type];
-                console.log(this.cnf.typeToggle[type]);
                 if (this.cnf.types.indexOf(type) === -1) this.cnf.types.push(type);
                 else this.cnf.types.splice(this.cnf.types.indexOf(type), 1);
-                console.log(this.cnf.types);
             },
             typeClearAll: function(e) {
                 for (let typeName in this.cnf.typeToggle) {
