@@ -1,6 +1,6 @@
 # Mapbox Geocoder Debug Tool
 
-Internal tool for testing v5 of the Mapbox geocoder, located at [https://hey.mapbox.com/search-playground/](https://hey.mapbox.com/search-playground/).
+Internal tool for testing v5 of the Mapbox geocoder, located at [https://mapbox.com/search-playground/](https://mapbox.com/search-playground/).
 
 Currently supports:
 
@@ -34,7 +34,7 @@ yarn start
 
 ## Deploying
 
-Deploys are managed by updating the `hey-pages` branch.
+Deploys are managed by updating the `hey-pages` & `mb-pages` branches.
 
 To deploy run the following:
 
