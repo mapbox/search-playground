@@ -707,6 +707,9 @@ window.onload = () => {
                 xhr.open('GET', `http://127.0.0.1:8111/load_and_zoom?left=${sw[0]}&right=${ne[0]}&top=${ne[1]}&bottom=${sw[1]}`);
                 xhr.send();
             },
+            bugReport: (e) => {
+                window.open('https://github.com/mapbox/search-playground/issues/new');
+            },
             toFeatureCollection: function(feature) {
                 let routablePoint;
                 if (feature.routable_points && feature.routable_points.points) {
