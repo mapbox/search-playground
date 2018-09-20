@@ -1,0 +1,27 @@
+{
+  "name": "search-playground",
+  "version": "1.0.0",
+  "description": "Search Playground",
+  "main": "index.js",
+  "repository": "git@github.com:mapbox/search-playground",
+  "author": "ingalls <ingalls@protonmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build index.html --public-url='/search-playground/'"
+  },
+  "dependencies": {
+    "@vue/component-compiler-utils": "^1.3.1",
+    "babel-preset-env": "^1.7.0",
+    "mapbox-gl-draw-rectangle-mode": "^1.0.3",
+    "parcel-bundler": "^1.9.7",
+    "vue-hot-reload-api": "^2.3.0",
+    "vue-template-compiler": "^2.5.17"
+  },
+  "devDependencies": {
+    "node-sass": "^4.9.3"
+  },
+  "engines": {
+    "yarn": "*"
+  }
+}
