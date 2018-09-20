@@ -43,9 +43,10 @@
 
                 <div class='col col--4 col--8-mm'>
                     <button @click="panelManage('settings')" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-sprocket'/></svg></button>
+                    <button @click="bugReport" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-bug'></use></svg></button>
                     <button @click="shareClick" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-share'/></svg></button>
                     <button @click="panelManage('json')" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-code'/></svg></button>
-                    <template v-if= "hostname==='hey.mapbox.com'">
+                    <template v-if= "credentials.debug.authed">
                     <button @click="hecate" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-osm'/></svg></button>
                     <button @click="josm" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-pencil'/></svg></button>
                     </template>
@@ -82,7 +83,7 @@
 
                     <div class='col col--12'>
                         <!--Staging Toggle-->
-                        <div v-if="hostname==='hey.mapbox.com'" class='col col--12'>
+                        <div v-if="credentials.debug.authed" class='col col--12'>
                             <div class='col col--12 py12'>
                                 <label class='switch-container fl pr12'>
                                     <input v-model='cnf.staging' type='checkbox'/>
@@ -222,7 +223,7 @@
 
                         <!--Debug mode-->
                         <!-- Only visible once temporary token has been retrieved -->
-                        <div class='col col--12' v-if="hostname==='hey.mapbox.com'">
+                        <div class='col col--12' v-if="credentials.debug.authed">
                             <!-- Toggle -->
                             <div class="col col--12 py12">
                                 <label class='switch-container fl pr12'>
