@@ -127,7 +127,6 @@ window.onload = () => {
                     'neighborhood': false,
                     'address': false,
                     'poi': false,
-                    'poi.landmark': false
                 },
                 types: [],
                 bbox: '',
