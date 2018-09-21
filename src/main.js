@@ -535,7 +535,6 @@ window.onload = () => {
                     el.className = 'marker';
                     el.style.backgroundImage = 'url(' + require('./img/dot.png') +')';
                     this.reverseMarker = new mapboxgl.Marker(el).setLngLat([Number(this.query.split(',')[0]), Number(this.query.split(',')[1])]);
-                    console.log();
                     this.reverseMarker.addTo(this.map);
                 }
 
