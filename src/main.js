@@ -136,13 +136,13 @@ window.onload = () => {
                 languageStrict: false,
                 onDebug: false,
                 selectedLayer: '',
-                debugClick: {}
+                debugClick: {},
+                jsonPanel: false
             },
             buildingBBox: false,
             hostname: location.hostname,
             getlocation: false,
-            jsonPanel: false,
-            settingsPanel: false,
+            settingsPanel: true,
             searchTime: new Date()
         },
         // Called synchronously after the Vue instance is created https://vuejs.org/v2/api/#created
@@ -463,9 +463,9 @@ window.onload = () => {
             panelManage: function(panel) {
                 if (panel == 'settings') {
                     this.settingsPanel = !this.settingsPanel;
-                    this.jsonPanel = false;
+                    this.cnf.jsonPanel = false;
                 } else {
-                    this.jsonPanel = !this.jsonPanel;
+                    this.cnf.jsonPanel = !this.cnf.jsonPanel;
                     this.settingsPanel = false;
                 }
             },
