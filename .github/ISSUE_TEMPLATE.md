@@ -3,6 +3,6 @@
 
 ### Context
 
-<!-- Description of what is the issue or request. Better if screenshoots/screencast is included-->
+<!-- Description of what is the issue or request. Better if screenshots/screencast is included-->
 
 
