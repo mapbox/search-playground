@@ -136,13 +136,13 @@ window.onload = () => {
                 languageStrict: false,
                 onDebug: false,
                 selectedLayer: '',
-                debugClick: {},
-                jsonPanel: false
+                debugClick: {}
             },
             buildingBBox: false,
             hostname: location.hostname,
             getlocation: false,
             settingsPanel: true,
+            jsonPanel: false,
             searchTime: new Date()
         },
         // Called synchronously after the Vue instance is created https://vuejs.org/v2/api/#created
@@ -463,10 +463,12 @@ window.onload = () => {
             panelManage: function(panel) {
                 if (panel == 'settings') {
                     this.settingsPanel = !this.settingsPanel;
-                    this.cnf.jsonPanel = false;
+                    this.jsonPanel = false;
+                    this.updateHash();
                 } else {
-                    this.cnf.jsonPanel = !this.cnf.jsonPanel;
+                    this.jsonPanel = !this.jsonPanel;
                     this.settingsPanel = false;
+                    this.updateHash();
                 }
             },
             countryFind: function(query) {
@@ -488,6 +490,7 @@ window.onload = () => {
                 //Update URL hash
                 let cnf = JSON.parse(JSON.stringify(this.cnf));
                 cnf.query = this.query;
+                cnf.jsonPanel = this.jsonPanel;
 
                 window.location.hash = JSON.stringify(cnf);
             },

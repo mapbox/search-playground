@@ -257,7 +257,7 @@
             </div>
 
             <!-- JSON Response -->
-            <div v-if="cnf.jsonPanel" class='left-pane w-full w600-mm bg-white px24 py24'>
+            <div v-if="jsonPanel" class='left-pane w-full w600-mm bg-white px24 py24'>
                 <button v-clipboard:copy="cnf.onDebug ? JSON.stringify(vtQueryResults, null, 4) : JSON.stringify(geocoderResults, null, 4)" class='fr btn h36 round bg-default transition bg-default-dark-on-hover'><svg class='icon'><use href='#icon-clipboard'/></svg></button>
                 <pre><json-tree :raw="cnf.onDebug ? JSON.stringify(vtQueryResults, null, 4) : JSON.stringify(geocoderResults, null, 4)"></json-tree></pre>
             </div>
