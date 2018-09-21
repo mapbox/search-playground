@@ -533,8 +533,7 @@ window.onload = () => {
                 if (this.map && this.query.split(',').length === 2 && !isNaN(Number(this.query.split(',')[0])) && !isNaN(Number(this.query.split(',')[1]))) {
                     const el = document.createElement('div');
                     el.className = 'marker';
-                    el.style.backgroundImage = 'url(img/dot.png)';
-
+                    el.style.backgroundImage = 'url(' + require('./img/dot.png') +')';
                     this.reverseMarker = new mapboxgl.Marker(el).setLngLat([Number(this.query.split(',')[0]), Number(this.query.split(',')[1])]);
                     this.reverseMarker.addTo(this.map);
                 }
