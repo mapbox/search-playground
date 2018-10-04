@@ -142,7 +142,7 @@ window.onload = () => {
             hostname: location.hostname,
             getlocation: false,
             jsonPanel: false,
-            settingsPanel: false,
+            settingsPanel: true,
             searchTime: new Date()
         },
         // Called synchronously after the Vue instance is created https://vuejs.org/v2/api/#created
