@@ -32,6 +32,7 @@ window.onload = () => {
                 },
             },
             bbox: { type: 'FeatureCollection', features: [] },
+            reverse: false,
             query: '',
             url: '',
             saved: [],
@@ -274,6 +275,8 @@ window.onload = () => {
                     }
                 });
             });
+
+            this.search();
         },
         // watch functions are triggered by user interactions which change values in the `data` property
         watch: {
@@ -520,6 +523,11 @@ window.onload = () => {
                     }]
                 }
             },
+            invert: function() {
+                console.error(this.query);
+                this.query = this.query.split(',').reverse().join(',');
+                this.geocoderResults.features = [];
+            },
             search: function() {
                 let searchTime = new Date();
                 this.updateHash();
@@ -531,11 +539,14 @@ window.onload = () => {
 
                 //Check if it is a reverse query and drop a point on the map if it is
                 if (this.map && this.query.split(',').length === 2 && !isNaN(Number(this.query.split(',')[0])) && !isNaN(Number(this.query.split(',')[1]))) {
+                    this.reverse = true;
                     const el = document.createElement('div');
                     el.className = 'marker';
                     el.style.backgroundImage = 'url(' + require('./img/dot.png') +')';
                     this.reverseMarker = new mapboxgl.Marker(el).setLngLat([Number(this.query.split(',')[0]), Number(this.query.split(',')[1])]);
                     this.reverseMarker.addTo(this.map);
+                } else {
+                    this.reverse = false;
                 }
 
                 let env = this.cnf.staging ? 'staging' : 'production';
