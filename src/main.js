@@ -206,6 +206,8 @@ window.onload = () => {
                     this.map.addLayer({ 'id': 'bbox', 'source': 'bbox', 'type': 'fill', 'paint': { 'fill-color': '#273d56', 'fill-opacity': 0.5 } });
                 });
 
+                this.search();
+
                 this.map.on('load', () => {
                     // Add watch functions that trigger map events
                     // after map has been loaded to avoid GL JS errors
@@ -275,8 +277,6 @@ window.onload = () => {
                     }
                 });
             });
-
-            this.search();
         },
         // watch functions are triggered by user interactions which change values in the `data` property
         watch: {
