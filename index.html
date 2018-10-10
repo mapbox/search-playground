@@ -42,6 +42,7 @@
                 </div>
 
                 <div class='col col--4 col--8-mm'>
+                    <button @click="invert" v-if='reverse' class='fl btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-rotate'></use></svg></button>
                     <button @click="panelManage('settings')" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-sprocket'/></svg></button>
                     <button @click="bugReport" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-bug'></use></svg></button>
                     <button @click="shareClick" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-share'/></svg></button>
