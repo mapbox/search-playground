@@ -54,6 +54,7 @@ Parameters available in the playground:
 - Test geocoding layers.
 
 **What you cannot do...**
+
 :x: Use it as a permanent endpoint
 
 ## Run it locally with parcel
