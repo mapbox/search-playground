@@ -7,8 +7,8 @@
   "author": "ingalls <ingalls@protonmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "parcel -d _site/",
-    "build": "parcel build index.html -d _site/ --no-minify --public-url='/search-playground/'"
+    "start": "parcel",
+    "build": "parcel build index.html --no-minify --public-url='/search-playground/'"
   },
   "dependencies": {
     "@vue/component-compiler-utils": "^1.3.1",
