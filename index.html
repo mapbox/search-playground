@@ -69,7 +69,15 @@
                 <div class='grid px24 py24'>
                     <div class='col col--12'>
                         <h2 class='txt-h3 fl'>Settings</h2>
+                        <button v-tooltip='"Toggle Raw URL View"' @click="urlview = !urlview" class='btn round fr'><svg class='icon'><use href='#icon-eye'></use></svg></button>
                     </div>
+
+                    <template v-if='urlview'>
+                        <div class='col col--12 py6 border-b border--gray-light'>
+                            <h3 class='txt-h4 fl py3'>Raw API Request</h3>
+                            <textarea v-if='urlview' v-model="url" readonly placeholder='API URL' class='textarea w-full h180'></textarea>
+                        </div>
+                    </template>
 
                     <div class='col col--12 py12'>
                         <div class='grid grid--gut12'>

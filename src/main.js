@@ -35,6 +35,7 @@ window.onload = () => {
             reverse: false,
             query: '',
             url: '',
+            urlview: false, //Show URL in settings panel
             saved: [],
             reverseMarker: false, //Store the GL Click marker for a reverse Geocode
             // Results from forward or reverse geocoding queries
