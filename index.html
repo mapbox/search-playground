@@ -42,14 +42,14 @@
                 </div>
 
                 <div class='col col--4 col--8-mm'>
-                    <button @click="invert" v-if='reverse' class='fl btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-rotate'></use></svg></button>
-                    <button @click="panelManage('settings')" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-sprocket'/></svg></button>
-                    <button @click="bugReport" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-bug'></use></svg></button>
-                    <button @click="shareClick" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-share'/></svg></button>
-                    <button @click="panelManage('json')" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-code'/></svg></button>
+                    <button @click="invert" v-tooltip="'Flip Coordinates'" v-if='reverse' class='fl btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-rotate'></use></svg></button>
+                    <button @click="panelManage('settings')" v-tooltip="'Toggle Settings Panel'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-sprocket'/></svg></button>
+                    <button @click="bugReport" v-tooltip="'Found a bug?'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-bug'></use></svg></button>
+                    <button @click="shareClick" v-tooltip="'Open API URL'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-share'/></svg></button>
+                    <button @click="panelManage('json')" v-tooltip="'Toggle JSON Panel'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-code'/></svg></button>
                     <template v-if= "credentials.debug.authed">
-                    <button @click="hecate" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-osm'/></svg></button>
-                    <button @click="josm" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-pencil'/></svg></button>
+                    <button @click="hecate" v-tooltip="'Open View in Hecate'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-osm'/></svg></button>
+                    <button @click="josm" v-tooltip="'Open View in JOSM'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-pencil'/></svg></button>
                     </template>
                 </div>
             </div>
