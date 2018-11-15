@@ -16,6 +16,7 @@
     "mapbox-gl-draw-rectangle-mode": "^1.0.3",
     "parcel-bundler": "^1.9.7",
     "vue-hot-reload-api": "^2.3.0",
+    "vue-swal": "^0.1.0",
     "vue-template-compiler": "^2.5.17"
   },
   "devDependencies": {
