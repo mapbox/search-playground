@@ -2,9 +2,6 @@
 /* global L */
 
 import DrawRectangle from 'mapbox-gl-draw-rectangle-mode';
-import VueSwal from 'vue-swal';
-
-Vue.use(VueSwal)
 
 window.onload = () => {
     window.vue = new Vue({
@@ -651,22 +648,6 @@ window.onload = () => {
                     this.buildingBBox = false;
                     this.map.removeControl(this.draw);
                 });
-            },
-            bboxPopup: function (e) {
-                if (!sessionStorage.getItem('firstBBoxclick')) {
-                    const span = document.createElement("span")
-                    span.innerHTML = '<b>1.</b> Click to add first corner (release) <br> <b>2.</b> Move cursor to the next corner <br> <b>3.</b> Click again to complete the Bbox'
-                    this.$swal({
-                        title: 'To draw BBox',
-                        content: span,
-                        icon: 'warning'
-                    });
-                    sessionStorage.setItem('firstBBoxclick', '1');
-                }
-            },
-            bboxHandler: function() {
-                this.bboxDraw();
-                this.bboxPopup();
             },
             resultEnter: function(e) {
                 if (!this.cnf.onDebug) {

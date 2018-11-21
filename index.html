@@ -53,17 +53,6 @@
                     </template>
                 </div>
             </div>
-            <!-- mode pop up -->
-            <div v-if='getlocation' class="grid grid-gut12 absolute bottom z1 w-full">
-                    <div class='col round col--3 relative px12 py12 bg-transparent align-center txt-shadow-lighten50 color-darken mx60 my30'>
-                        <h4 class='txt-h4 fl'>Click on the map to set the proximity</h4>
-                    </div>
-            </div>
-            <!-- <div v-if='buildingBBox' class="grid round grid-gut12 absolute bottom z1 w-full">
-                    <div class='col round col--3 relative px12 py12 bg-transparent align-center txt-shadow-lighten50 color-darken mx60 my30'>
-                            <h4 class='txt-h4 fl'>Click, Drag, Click to draw manual BBox</h4>
-                    </div>
-            </div> -->
             <!-- Settings -->
             <div v-if='settingsPanel' class='left-pane w-full w600-mm bg-white'>
                 <div class='grid px24 py24'>
@@ -173,7 +162,7 @@
                             </div>
 
                             <div class="col col--12 px48 relative">
-                                <div @click="bboxHandler" class='cursor-pointer absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><span v-tooltip="'Draw BBOX manually'"><svg class='icon'><use href='#icon-viewport'></use></svg></span></div>
+                                <div @click="bboxDraw" class='cursor-pointer absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><span v-tooltip="'Draw BBOX manually'"><svg class='icon'><use href='#icon-viewport'></use></svg></span></div>
                                 <input v-model="cnf.bbox" class="input px36" id='bboxInput' type='text' placeholder='minX,minY,maxX,maxY'/>
                             </div> 
                         </div>
@@ -309,6 +298,17 @@
                     </div>
                 </div>
             </div>
+            <!-- mode pop up -->
+                <div v-if='getlocation' class="grid grid-gut12 absolute bottom z1 w-full">
+                    <div class='col round col--3 relative px12 py12 bg-blue align-center color-white mx60 my30'>
+                        <h4 class='txt-h4 fl'>Click on the map to set proximity</h4>
+                    </div>
+                </div>
+                <div v-if='buildingBBox' class="grid round grid-gut12 absolute bottom z1 w-full">
+                    <div class='col round col--3 relative px12 py12 bg-blue align-center color-white mx60 my30'>
+                        <h4 class='txt-h4 fl'><b>1.</b> Click to add first corner (release) <br> <b>2.</b> Move cursor to the next corner <br> <b>3.</b> Click again to complete the Bbox</h4>
+                    </div>
+                </div>
 
             <div id='style-sat' class='style' @click="setStyle('mapbox://styles/mapbox/satellite-v9')"></div>
             <div id='style-def' class='style' @click="setStyle('mapbox://styles/mapbox/streets-v8')"></div>
