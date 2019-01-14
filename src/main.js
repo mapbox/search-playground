@@ -13,7 +13,8 @@ window.onload = () => {
             credentials: {
                 production: {
                     url: 'https://api.mapbox.com/geocoding/v5',
-                    key: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g'
+                    key: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g',
+                    key_local: 'pk.eyJ1IjoiYXBleHNlYXJjaHVzZXIiLCJhIjoiY2pxc2V6bjVyMHVxcjQ4cXE4cmg1a242diJ9.TMZ9oWhH_fF4ccYkaMeyAw'
                 },
                 staging: {
                     url: 'https://api-geocoder-staging.tilestream.net/geocoding/v5',
@@ -138,7 +139,8 @@ window.onload = () => {
                 languageStrict: false,
                 onDebug: false,
                 selectedLayer: '',
-                debugClick: {}
+                debugClick: {},
+                localsearch: false
             },
             buildingBBox: false,
             hostname: location.hostname,
@@ -300,7 +302,8 @@ window.onload = () => {
             'cnf.onLanguage': function() { return this.search(); },
             'cnf.languages': function() { return this.search(); },
             'cnf.languageStrict': function() { return this.search(); },
-            'cnf.routing': function() { return this.search(); }
+            'cnf.routing': function() { return this.search(); },
+            'cnf.localsearch': function() { return this.search(); }
         },
         // methods functions perform CRUD operations on the `data` property
         methods: {
@@ -551,8 +554,10 @@ window.onload = () => {
                 }
 
                 let env = this.cnf.staging ? 'staging' : 'production';
+                const tokenKey = this.cnf.localsearch ?  'key_local' : 'key';
+                const  accessToken = this.credentials[env][tokenKey];
 
-                let url = `${this.credentials[env].url}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${this.credentials[env].key}&cachebuster=${(+new Date())}`;
+                let url = `${this.credentials[env].url}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
                 url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
 
                 if (this.cnf.onCountry && this.cnf.countries.length) url = `${url}&country=${encodeURIComponent(this.cnf.countries.map((country) => { return country.code }).join(','))}`;
@@ -563,6 +568,7 @@ window.onload = () => {
                 if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
                 if (this.cnf.languageStrict) url = `${url}&languageMode=strict`;
                 if (this.cnf.routing) url = `${url}&routing=true`;
+    
 
                 this.url = url;
 
