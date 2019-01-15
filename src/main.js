@@ -14,7 +14,7 @@ window.onload = () => {
                 production: {
                     url: 'https://api.mapbox.com/geocoding/v5',
                     key: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g',
-                    key_local: 'pk.eyJ1IjoiYXBleHNlYXJjaHVzZXIiLCJhIjoiY2pxc2V6bjVyMHVxcjQ4cXE4cmg1a242diJ9.TMZ9oWhH_fF4ccYkaMeyAw'
+                    key_hiero_federation: 'pk.eyJ1IjoiYXBleHNlYXJjaHVzZXIiLCJhIjoiY2pxc2V6bjVyMHVxcjQ4cXE4cmg1a242diJ9.TMZ9oWhH_fF4ccYkaMeyAw'
                 },
                 staging: {
                     url: 'https://api-geocoder-staging.tilestream.net/geocoding/v5',
@@ -554,7 +554,7 @@ window.onload = () => {
                 }
 
                 let env = this.cnf.staging ? 'staging' : 'production';
-                const tokenKey = this.cnf.localsearch ?  'key_local' : 'key';
+                const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key';
                 const  accessToken = this.credentials[env][tokenKey];
 
                 let url = `${this.credentials[env].url}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
