@@ -1,4 +1,4 @@
-/*jshint browser:true,curly: false */
+/* jshint browser:true,curly: false */
 /* global L */
 
 import DrawRectangle from 'mapbox-gl-draw-rectangle-mode';
