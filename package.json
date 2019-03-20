@@ -7,7 +7,7 @@
   "author": "ingalls <ingalls@protonmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "parcel",
+    "start": "parcel index.html",
     "build": "parcel build index.html -d _site --no-minify --public-url='/search-playground/'"
   },
   "dependencies": {
