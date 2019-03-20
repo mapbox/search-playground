@@ -181,7 +181,7 @@ window.onload = () => {
                 mapboxgl.accessToken = this.credentials.map.key;
                 this.map = new mapboxgl.Map({
                     container: 'map',
-                    style: 'mapbox://styles/mapbox/streets-v8',
+                    style: 'mapbox://styles/mapbox/streets-v11',
                     center: [-96, 37.8],
                     zoom: 3
                 });
