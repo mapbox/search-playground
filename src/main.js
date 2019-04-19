@@ -196,7 +196,9 @@ window.onload = () => {
                 this.map.on('style.load', () => {
                     this.map.addSource('markers', { type: 'geojson', data: this.geocoderResults });
                     this.map.addSource('bbox', { type: 'geojson', data: this.bbox });
-
+                    
+                    this.map.addSource('proximity', {type: 'geojson', data: turf.featureCollection([])});
+                    
                     for (let src of ['selected', 'hovered', 'hovered-bbox', 'debug']) {
                         this.map.addSource(src, { 'type': 'geojson', 'data': { 'type': 'FeatureCollection', 'features': [] } });
                     }
@@ -207,6 +209,7 @@ window.onload = () => {
                     this.map.addLayer({ 'id': 'hovered-bbox', 'source': 'hovered-bbox', 'type': 'line', 'paint': { 'line-width': 2, 'line-color': '#0f9900' } });
                     this.map.addLayer({ 'id': 'debug', 'source': 'debug', 'type': 'circle', 'paint': { 'circle-radius': 10, 'circle-color': '#000000' } });
                     this.map.addLayer({ 'id': 'bbox', 'source': 'bbox', 'type': 'fill', 'paint': { 'fill-color': '#273d56', 'fill-opacity': 0.5 } });
+                    this.map.addLayer({ 'id': 'proximity', 'source': 'proximity', 'type': 'circle', 'paint': { 'circle-color': 'black' } });
                 });
 
                 this.search();
@@ -261,6 +264,10 @@ window.onload = () => {
                         this.setMarkers('bbox', this.bbox);
                     }, { immediate: true });
 
+                    if (this.cnf.proximity){
+                        let proximity =  this.cnf.proximity.split(",").map((c)=>{return parseFloat(c)});
+                        this.setMarkers('proximity', turf.point(proximity));
+                    }
                 });
 
                 this.map.on('click', (e) => {
@@ -273,6 +280,8 @@ window.onload = () => {
                             }
                         } else if (this.getlocation) {
                             this.cnf.proximity = `${pt.lng},${pt.lat}`;
+                            this.proximity = turf.point([pt.lng,pt.lat]);
+                            this.setMarkers('proximity', this.proximity)
                             this.getlocation = false;
                         } else {
                             this.query = `${pt.lng},${pt.lat}`;
