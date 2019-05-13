@@ -215,6 +215,7 @@ window.onload = () => {
                     // Add watch functions that trigger map events
                     // after map has been loaded to avoid GL JS errors
                     // Trigger the watch functions immediately
+                    this.map.showTileBoundaries(true);
 
                     const scale = new mapboxgl.ScaleControl({
                         maxWidth: 58,
@@ -226,6 +227,7 @@ window.onload = () => {
                         this.updateHash();
                         this.toggleTiles();
                         if (val) {
+                            this.map.showTileBoundaries(true);
                             if (this.cnf.debugClick.coords && this.cnf.debugClick.coords.length === 2) {
                                 this.setMarkers('debug', turf.featureCollection([turf.point(this.cnf.debugClick.coords)]));
                             }
@@ -233,6 +235,7 @@ window.onload = () => {
                                 this.clearMarkers(src);
                             }
                         } else {
+                            this.map.showTileBoundaries(false);
                             this.clearMarkers('debug');
                             this.setMarkers('markers', this.geocoderResults);
                         }
