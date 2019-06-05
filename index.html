@@ -22,8 +22,8 @@
         <script src="https://unpkg.com/v-tooltip"></script>
 
         <!-- Map -->
-        <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
-        <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+        <script src='https://api.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
         <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js'></script>
         <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css' type='text/css'/>
         <script async src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
@@ -250,6 +250,17 @@
                             </div>
                         </div>
 
+                        <!--local search Toggle-->
+                        <div class='col col--12'>
+                            <div class="col col--12 py12">
+                                <label class='switch-container fl pr12'>
+                                    <input v-model="cnf.localsearch" type='checkbox'/>
+                                    <div class='switch'></div>
+                                </label>
+                                <h3 class='txt-h4' v-tooltip='"Local search available by contacting Mapbox Support"'><span>Local Search<span><span class='ml12 txt-s color-red-light color-red-dark-on-hover'>BETA<span></h3>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -268,17 +279,22 @@
                     <div class='resultsList'>
                         <div v-for="(res, res_it) res in (cnf.onDebug ? vtQueryResults.features: geocoderResults.features)" class="res clearfix" :result="res_it" @mouseenter="resultEnter" @mouseleave="resultLeave" @click="resultClick">
                             <template v-if="res.id.toString().split('.')[0] == 'address'">
-                                <template v-if="res.geometry.interpolated"> <!-- Show Icon for Interpolated Address -->
+                                <template v-if="res.properties.accuracy === 'interpolated'">
                                     <div class="resIcon" :result="res_it">
                                         <svg class='icon'><use href='#icon-point-line'/></svg>
                                     </div>
                                 </template>
-                                <template v-else-if="!res.address"> <!-- If it doesn't have address property it is a street -->
+                                <template v-else-if="res.properties.accuracy === 'street'">
                                     <div class="resIcon" :result="res_it">
                                         <svg class='icon'><use href='#icon-line'/></svg>
                                     </div>
                                 </template>
-                                <template v-else> <!-- Everything else are address points -->
+                                <template v-else-if="res.properties.accuracy === 'intersection'">
+                                    <div class="resIcon" :result="res_it">
+                                        <svg class='icon'><use href='#icon-plus'/></svg>
+                                    </div>
+                                </template>
+                                <template v-else>
                                     <div class="resIcon" :result="res_it">
                                         <svg class='icon'><use href='#icon-marker'/></svg>
                                     </div>

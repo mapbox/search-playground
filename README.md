@@ -59,13 +59,14 @@ Parameters available in the playground:
 
 ## Run it locally with parcel
     yarn install
+    yarn build
     yarn start
 ## Deploying
 
-Deploys are managed by updating the `hey-pages` & `mb-pages` branches.
+Deploys are managed by updating the `hey-pages` & `publisher-production` branches.
 To deploy run the following:
 
-    git checkout mb-pages
+    git checkout publisher-production
     
     git merge master
     

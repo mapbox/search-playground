@@ -7,8 +7,9 @@
   "author": "ingalls <ingalls@protonmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "parcel",
-    "build": "parcel build index.html -d _site --no-minify --public-url='/search-playground/'"
+    "start": "parcel index.html",
+    "build": "parcel build index.html -d _site --no-minify --public-url='/search-playground/'",
+    "local": "export DEPLOY_ENV='local' && parcel index.html serve -d _site --public-url='/search-playground/'"
   },
   "dependencies": {
     "@vue/component-compiler-utils": "^1.3.1",
