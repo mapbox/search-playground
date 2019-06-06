@@ -59,6 +59,7 @@ Parameters available in the playground:
 
 ## Run it locally with parcel
     yarn install
+    yarn build
     yarn start
 ## Deploying
 

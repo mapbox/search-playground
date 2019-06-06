@@ -17,8 +17,9 @@ window.onload = () => {
                     key_hiero_federation: 'pk.eyJ1IjoiYXBleHNlYXJjaHVzZXIiLCJhIjoiY2pxc2V6bjVyMHVxcjQ4cXE4cmg1a242diJ9.TMZ9oWhH_fF4ccYkaMeyAw'
                 },
                 staging: {
-                    url: 'https://api-geocoder-staging.tilestream.net/geocoding/v5',
-                    key: false
+                    url: process.env.DEPLOY_ENV === 'local' ? 'http://localhost:8000/geocoding/v5': 'https://api-geocoder-staging.tilestream.net/geocoding/v5',
+                    key: process.env.DEPLOY_ENV === 'local' ? 'pk.eyJ1IjoiYXBpa2V5dXNlciIsImEiOiJhYmNkZWZnIn0.ENonA568sn1Xp32NR6CvxA': false,
+                    authed: process.env.DEPLOY_ENV === 'local' ? true : false
                 },
                 map: {
                     key: 'pk.eyJ1Ijoic2JtYTQ0IiwiYSI6ImNpcXNycTNqaTAwMDdmcG5seDBoYjVkZGcifQ.ZVIe6sjh0QGeMsHpBvlsEA'
@@ -26,7 +27,7 @@ window.onload = () => {
                 debug: {
                     url: 'https://api.mapbox.com/geocoding/v5/tiles',
                     key: '',
-                    authed: false
+                    authed: process.env.DEPLOY_ENV === 'local' ? true : false
                 },
                 heyProxy: {
                     url: 'https://hey.mapbox.com/search-playground/geocoding-debug'
