@@ -308,7 +308,7 @@ window.onload = () => {
         },
         // methods functions perform CRUD operations on the `data` property
         methods: {
-            help: function(url = 'https://www.mapbox.com/api-documentation/#search-for-places') {
+            help: function(url = 'https://docs.mapbox.com/api/search/#forward-geocoding') {
                 window.open(url, '_blank');
             },
             //Parse Settings from a Mapbox API URL
