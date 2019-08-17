@@ -279,7 +279,7 @@
                     <div class='resultsList'>
                         <div v-for="(res, res_it) res in (cnf.onDebug ? vtQueryResults.features: geocoderResults.features)" class="res clearfix" :result="res_it" @mouseenter="resultEnter" @mouseleave="resultLeave" @click="resultClick">
                             <template v-if="res.id.toString().split('.')[0] == 'address'">
-                                <template v-if="res.id.split('.')[0] === '0'">
+                                <template v-if="res.properties.accuracy === 'approximate'">
                                     <div class="resIcon" :result="res_it">
                                         <svg class='icon'><use href='#icon-line-center'/></svg>
                                     </div>
