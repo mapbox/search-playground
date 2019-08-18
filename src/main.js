@@ -33,6 +33,10 @@ window.onload = () => {
                     url: 'https://hey.mapbox.com/search-playground/geocoding-debug'
                 },
             },
+
+            // If the page is just loaded and has a query in the hash value,
+            // zoom the map to the bbox extent of the results
+            fitZoom: false,
             bbox: { type: 'FeatureCollection', features: [] },
             reverse: false,
             query: '',
@@ -159,6 +163,7 @@ window.onload = () => {
 
             // Set state to hashed value
             if (window.location.hash) {
+                this.fitZoom = true;
                 let cnf = JSON.parse(decodeURIComponent(window.location.hash.substring(1, window.location.hash.length)));
                 // Populate the query form separately from other cnf properties
                 // query is part of the Vue's data property, not the cnf
@@ -569,7 +574,7 @@ window.onload = () => {
                 if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
                 if (this.cnf.languageStrict) url = `${url}&languageMode=strict`;
                 if (this.cnf.routing) url = `${url}&routing=true`;
-    
+
 
                 this.url = url;
 
@@ -587,6 +592,14 @@ window.onload = () => {
                         } else {
                             for (let feat of JSON.parse(xhr.responseText).features) {
                                 this.geocoderResults.features.push(feat);
+                            }
+
+                            if (this.fitZoom) {
+                                this.map.fitBounds(turf.bbox(this.geocoderResults), {
+                                    animate: false,
+                                    padding: 250
+                                });
+                                this.fitZoom = false;
                             }
                         }
                     }
