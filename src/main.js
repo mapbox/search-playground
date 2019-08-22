@@ -295,6 +295,7 @@ window.onload = () => {
             },
             query: function() { return this.search(); },
             'cnf.staging': function() { return this.search(); },
+            'cnf.approx': function() { return this.search(); },
             'cnf.onCountry': function() { return this.search(); },
             'cnf.countries': function() { return this.search(); },
             'cnf.onType': function() { return this.search(); },
@@ -381,16 +382,21 @@ window.onload = () => {
             },
             // retrieve temporary token from hey-proxy
             retrieveToken: function() {
-                let xhr = new XMLHttpRequest();
-                xhr.open('GET', this.credentials.heyProxy.url);
-                xhr.onload = () => {
-                    if (Math.floor(xhr.status / 100) * 100 !== 200) return console.error(xhr.status, xhr.responseText);
-                    this.credentials.debug.key = JSON.parse(xhr.responseText).token;
+                if (window.location.hostname === 'localhost') {
+                    // Show debug options on localhost
                     this.credentials.debug.authed = true;
-                    // load tile layers
-                    this.listTiles();
+                } else {
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('GET', this.credentials.heyProxy.url);
+                    xhr.onload = () => {
+                        if (Math.floor(xhr.status / 100) * 100 !== 200) return console.error(xhr.status, xhr.responseText);
+                        this.credentials.debug.key = JSON.parse(xhr.responseText).token;
+                        this.credentials.debug.authed = true;
+                        // load tile layers
+                        this.listTiles();
+                    }
+                    xhr.send();
                 }
-                xhr.send();
             },
             retrieveStaging: function() {
                 let xhr = new XMLHttpRequest();
