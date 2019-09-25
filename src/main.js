@@ -734,7 +734,7 @@ window.onload = () => {
                 }
             },
             hecate: function(e) {
-                const win = window.open(`https://hecate-internal-prod-us.private.tilestream.net/admin/index.html#${this.map.getZoom()}/${this.map.getCenter().lat}/${this.map.getCenter().lng}`, '_blank').focus();
+                const win = window.open(`https://hecate-internal-prod-us.tilestream.net/admin/index.html#${this.map.getZoom()}/${this.map.getCenter().lat}/${this.map.getCenter().lng}`, '_blank').focus();
             },
             josm: function(e) {
                 let ne = this.map.getBounds().getNorthEast().wrap().toArray();
