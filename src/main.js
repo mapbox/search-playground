@@ -385,7 +385,7 @@ window.onload = () => {
                 if (window.location.hostname === 'localhost') {
                     // Show debug options on localhost
                     this.credentials.debug.authed = true;
-                } else {
+                } else if (window.location.host !== 'docs.mapbox.com') {
                     let xhr = new XMLHttpRequest();
                     xhr.open('GET', this.credentials.heyProxy.url);
                     xhr.onload = () => {
