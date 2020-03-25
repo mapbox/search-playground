@@ -14,7 +14,10 @@ window.onload = () => {
                 production: {
                     url: 'https://api.mapbox.com/geocoding/v5',
                     key: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g',
-                    key_hiero_federation: 'pk.eyJ1IjoiYXBleHNlYXJjaHVzZXIiLCJhIjoiY2pxc2V6bjVyMHVxcjQ4cXE4cmg1a242diJ9.TMZ9oWhH_fF4ccYkaMeyAw'
+                    key_hiero_federation: 'pk.eyJ1IjoiYXBleHNlYXJjaHVzZXIiLCJhIjoiY2pxc2V6bjVyMHVxcjQ4cXE4cmg1a242diJ9.TMZ9oWhH_fF4ccYkaMeyAw',
+                    suggestUrl: 'http://search-federation-production.tilestream.net/api/v1/suggest',
+                    retrieveUrl: 'http://search-federation-production.tilestream.net/api/v1/retrieve',
+                    key_federation: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g'
                 },
                 staging: {
                     url: process.env.DEPLOY_ENV === 'local' ? 'http://localhost:8000/geocoding/v5': 'https://api-geocoder-staging.tilestream.net/geocoding/v5',
@@ -38,16 +41,17 @@ window.onload = () => {
             // zoom the map to the bbox extent of the results
             fitZoom: false,
             bbox: { type: 'FeatureCollection', features: [] },
-            reverse: false,
+            // reverse: false,
             query: '',
             url: '',
             urlview: false, //Show URL in settings panel
             saved: [],
-            reverseMarker: false, //Store the GL Click marker for a reverse Geocode
+            // reverseMarker: false, //Store the GL Click marker for a reverse Geocode
+            suggestResults: [],
             // Results from forward or reverse geocoding queries
             geocoderResults: { type: 'FeatureCollection', features: [] },
             // Results from querying vector tiles
-            vtQueryResults: { type: 'FeatureCollection', features: [] },
+            // vtQueryResults: { type: 'FeatureCollection', features: [] },
             countries: [],
             languages: [
                 { code: 'ar', name: 'Arabic' },
@@ -126,20 +130,21 @@ window.onload = () => {
                 onLanguage: true,
                 countries: [],
                 proximity: '',
-                typeToggle: {
-                    'country': false,
-                    'region': false,
-                    'district': false,
-                    'postcode': false,
-                    'locality': false,
-                    'place': false,
-                    'neighborhood': false,
-                    'address': false,
-                    'poi': false,
-                },
-                types: [],
+                // typeToggle: {
+                //     // 'country': false,
+                //     // 'region': false,
+                //     // 'district': false,
+                //     // 'postcode': false,
+                //     // 'locality': false,
+                //     // 'place': false,
+                //     // 'neighborhood': false,
+                //     'address': true,
+                //     'poi': false,
+                // },
+                type: 'address',
+                // types: [],
                 bbox: '',
-                limit: '',
+                limit: '5',
                 autocomplete: true,
                 languages: [],
                 languageStrict: false,
@@ -270,22 +275,22 @@ window.onload = () => {
 
                 });
 
-                this.map.on('click', (e) => {
-                    if (!this.buildingBBox) {
-                        let pt = e.lngLat.wrap();
-                        if (this.cnf.onDebug) {
-                            this.cnf.debugClick = {
-                                coords: [pt.lng, pt.lat],
-                                pixels: [e.point.x, e.point.y]
-                            }
-                        } else if (this.getlocation) {
-                            this.cnf.proximity = `${pt.lng},${pt.lat}`;
-                            this.getlocation = false;
-                        } else {
-                            this.query = `${pt.lng},${pt.lat}`;
-                        }
-                    }
-                });
+                // this.map.on('click', (e) => {
+                //     if (!this.buildingBBox) {
+                //         let pt = e.lngLat.wrap();
+                //         if (this.cnf.onDebug) {
+                //             this.cnf.debugClick = {
+                //                 coords: [pt.lng, pt.lat],
+                //                 pixels: [e.point.x, e.point.y]
+                //             }
+                //         } else if (this.getlocation) {
+                //             this.cnf.proximity = `${pt.lng},${pt.lat}`;
+                //             this.getlocation = false;
+                //         } else {
+                //             this.query = `${pt.lng},${pt.lat}`;
+                //         }
+                //     }
+                // });
             });
         },
         // watch functions are triggered by user interactions which change values in the `data` property
@@ -319,60 +324,60 @@ window.onload = () => {
                 window.open(url, '_blank');
             },
             //Parse Settings from a Mapbox API URL
-            parseURL: function() {
-                const url = new URL(this.cnf.url);
+            // parseURL: function() {
+            //     const url = new URL(this.cnf.url);
 
-                this.resetCnf();
+            //     this.resetCnf();
 
-                const query = decodeURIComponent(url.pathname.replace(/.*\//, '').replace('.json', ''));
+            //     const query = decodeURIComponent(url.pathname.replace(/.*\//, '').replace('.json', ''));
 
-                //TODO: This could be simplified by making the cnf props be identical in name
-                for (let entry of url.searchParams.entries()) {
-                    if (entry[0] === 'proximity') {
-                        this.cnf.proximity = entry[1];
-                    } else if (entry[0] === 'types') {
-                        const types = entry[1].split(',');
+            //     //TODO: This could be simplified by making the cnf props be identical in name
+            //     for (let entry of url.searchParams.entries()) {
+            //         if (entry[0] === 'proximity') {
+            //             this.cnf.proximity = entry[1];
+            //         } else if (entry[0] === 'types') {
+            //             const types = entry[1].split(',');
 
-                        this.typeClearAll();
-                        this.cnf.types = types;
-                        for (let type of types) {
-                            this.cnf.typeToggle[type] = true;
-                        }
-                    } else if (entry[0] === 'country') {
-                        entry[1].split(',').forEach((country) => {
-                            this.cnf.countries.push({
-                                name: country.toUpperCase(),
-                                code: country
-                            });
-                        });
-                    } else if (entry[0] === 'bbox') {
-                        this.cnf.bbox = entry[1];
-                    } else if (entry[0] === 'limit') {
-                        this.cnf.limit = parseInt(entry[1]);
-                    } else if (entry[0] === 'autocomplete') {
-                        this.cnf.autocomplete = entry[1] === 'false' ? false : 'true';
-                    } else if (entry[0] === 'language') {
-                        entry[1].split(',').map((lang) => {
-                            return lang.toLowerCase();
-                        }).forEach((lang) => {
-                            let found_lang;
-                            for (let l of this.languages) {
-                                if (l.code === lang) found_lang = l;
-                            }
+            //             this.typeClearAll();
+            //             this.cnf.types = types;
+            //             for (let type of types) {
+            //                 this.cnf.typeToggle[type] = true;
+            //             }
+            //         } else if (entry[0] === 'country') {
+            //             entry[1].split(',').forEach((country) => {
+            //                 this.cnf.countries.push({
+            //                     name: country.toUpperCase(),
+            //                     code: country
+            //                 });
+            //             });
+            //         } else if (entry[0] === 'bbox') {
+            //             this.cnf.bbox = entry[1];
+            //         } else if (entry[0] === 'limit') {
+            //             this.cnf.limit = parseInt(entry[1]);
+            //         } else if (entry[0] === 'autocomplete') {
+            //             this.cnf.autocomplete = entry[1] === 'false' ? false : 'true';
+            //         } else if (entry[0] === 'language') {
+            //             entry[1].split(',').map((lang) => {
+            //                 return lang.toLowerCase();
+            //             }).forEach((lang) => {
+            //                 let found_lang;
+            //                 for (let l of this.languages) {
+            //                     if (l.code === lang) found_lang = l;
+            //                 }
 
-                            if (found_lang) {
-                                this.cnf.languages.push(found_lang);
-                            } else {
-                                this.cnf.languages.push({ name: lang, code: lang });
-                            }
-                        });
-                    } else if (entry[0] === 'languageMode' && entry[1] === 'strict') {
-                        this.cnf.languageStrict = true;
-                    }
-                }
+            //                 if (found_lang) {
+            //                     this.cnf.languages.push(found_lang);
+            //                 } else {
+            //                     this.cnf.languages.push({ name: lang, code: lang });
+            //                 }
+            //             });
+            //         } else if (entry[0] === 'languageMode' && entry[1] === 'strict') {
+            //             this.cnf.languageStrict = true;
+            //         }
+            //     }
 
-                this.query = query;
-            },
+            //     this.query = query;
+            // },
             //Reset settings to their defalt values
             resetCnf: function() {
                 const cnf = JSON.parse(this.defaultCnf);
@@ -552,36 +557,38 @@ window.onload = () => {
 
                 if (this.query.length === 0) return;
 
-                if (this.reverseMarker) this.reverseMarker.remove();
+                // if (this.reverseMarker) this.reverseMarker.remove();
 
-                //Check if it is a reverse query and drop a point on the map if it is
-                if (this.map && this.query.split(',').length === 2 && !isNaN(Number(this.query.split(',')[0])) && !isNaN(Number(this.query.split(',')[1]))) {
-                    this.reverse = true;
-                    const el = document.createElement('div');
-                    el.className = 'marker';
-                    el.style.backgroundImage = 'url(' + require('./img/dot.png') +')';
-                    this.reverseMarker = new mapboxgl.Marker(el).setLngLat([Number(this.query.split(',')[0]), Number(this.query.split(',')[1])]);
-                    this.reverseMarker.addTo(this.map);
-                } else {
-                    this.reverse = false;
-                }
+                // //Check if it is a reverse query and drop a point on the map if it is
+                // if (this.map && this.query.split(',').length === 2 && !isNaN(Number(this.query.split(',')[0])) && !isNaN(Number(this.query.split(',')[1]))) {
+                //     this.reverse = true;
+                //     const el = document.createElement('div');
+                //     el.className = 'marker';
+                //     el.style.backgroundImage = 'url(' + require('./img/dot.png') +')';
+                //     this.reverseMarker = new mapboxgl.Marker(el).setLngLat([Number(this.query.split(',')[0]), Number(this.query.split(',')[1])]);
+                //     this.reverseMarker.addTo(this.map);
+                // } else {
+                //     this.reverse = false;
+                // }
 
                 let env = this.cnf.staging ? 'staging' : 'production';
-                const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key';
+                const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
                 const  accessToken = this.credentials[env][tokenKey];
 
-                let url = `${this.credentials[env].url}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
-                url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
+                let url = `${this.credentials[env].suggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                url = `${url}&limit=5`;
+                // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
+                // url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
 
-                if (this.cnf.onCountry && this.cnf.countries.length) url = `${url}&country=${encodeURIComponent(this.cnf.countries.map((country) => { return country.code }).join(','))}`;
-                if (this.cnf.onType && this.cnf.types.length) url = `${url}&types=${encodeURIComponent(this.cnf.types)}`;
-                if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
-                if (this.cnf.onBBOX && this.cnf.bbox) url = `${url}&bbox=${encodeURIComponent(this.cnf.bbox)}`;
-                if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
-                if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
-                if (this.cnf.languageStrict) url = `${url}&languageMode=strict`;
-                if (this.cnf.routing) url = `${url}&routing=true`;
-                if (!this.cnf.approx) url = `${url}&services=hiero`;
+                // if (this.cnf.onCountry && this.cnf.countries.length) url = `${url}&country=${encodeURIComponent(this.cnf.countries.map((country) => { return country.code }).join(','))}`;
+                // if (this.cnf.onType && this.cnf.types.length) url = `${url}&types=${encodeURIComponent(this.cnf.types)}`;
+                // if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
+                // if (this.cnf.onBBOX && this.cnf.bbox) url = `${url}&bbox=${encodeURIComponent(this.cnf.bbox)}`;
+                // if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
+                // if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
+                // if (this.cnf.languageStrict) url = `${url}&languageMode=strict`;
+                // if (this.cnf.routing) url = `${url}&routing=true`;
+                // if (!this.cnf.approx) url = `${url}&services=hiero`;
 
                 this.url = url;
 
@@ -593,20 +600,27 @@ window.onload = () => {
                     if (this.searchTime <= searchTime) {
                         this.searchTime = searchTime;
                         this.geocoderResults.features.splice(0, this.geocoderResults.features.length); //Clear Results
+                        this.suggestResults.splice(0, this.suggestResults.length); //Clear Results
 
                         if (xhr.status !== 200) {
                             //TODO ERROR HANDLING
                         } else {
-                            for (let feat of JSON.parse(xhr.responseText).features) {
-                                this.geocoderResults.features.push(feat);
-                            }
+                            if (this.cnf.type === 'address') {
+                                for (let sugg of JSON.parse(xhr.responseText)) {
+                                    this.suggestResults.push(sugg);
+                                }
+                            } else {
+                                for (let feat of JSON.parse(xhr.responseText).features) {
+                                    this.geocoderResults.features.push(feat);
+                                }
 
-                            if (this.fitZoom) {
-                                this.map.fitBounds(turf.bbox(this.geocoderResults), {
-                                    animate: false,
-                                    padding: 250
-                                });
-                                this.fitZoom = false;
+                                if (this.fitZoom) {
+                                    this.map.fitBounds(turf.bbox(this.geocoderResults), {
+                                        animate: false,
+                                        padding: 250
+                                    });
+                                    this.fitZoom = false;
+                                }
                             }
                         }
                     }
@@ -616,6 +630,7 @@ window.onload = () => {
             searchClear: function(e) {
                 this.query = '';
                 this.geocoderResults.features.splice(0, this.geocoderResults.features.length); //Clear Results
+                this.suggestResults.splice(0, this.suggestResults.length); //Clear Results
             },
             searchFocus: function(e) {
                 if (this.query.length === 0) {
@@ -634,10 +649,11 @@ window.onload = () => {
                 window.open(this.url, '_newtab');
             },
             typeClick: function(e) {
-                let type = e.target.getAttribute('type');
-                this.cnf.typeToggle[type] = !this.cnf.typeToggle[type];
-                if (this.cnf.types.indexOf(type) === -1) this.cnf.types.push(type);
-                else this.cnf.types.splice(this.cnf.types.indexOf(type), 1);
+                let searchType = e.target.value;
+                // this.cnf.typeToggle[type] = !this.cnf.typeToggle[type];
+                this.cnf.type = searchType;
+                // if (this.cnf.types.indexOf(type) === -1) this.cnf.types.push(type);
+                // else this.cnf.types.splice(this.cnf.types.indexOf(type), 1);
             },
             typeClearAll: function(e) {
                 for (let typeName in this.cnf.typeToggle) {
@@ -681,12 +697,12 @@ window.onload = () => {
                     let res = parseInt(e.target.getAttribute('result'));
 
                     //Saved results are special as they are just text - don't perform any action on hover
-                    if (this.geocoderResults.features[res].id === 'saved') return;
-                    this.setMarkers('hovered', this.toFeatureCollection(this.geocoderResults.features[res]));
+                    // if (this.geocoderResults.features[res].id === 'saved') return;
+                    // this.setMarkers('hovered', this.toFeatureCollection(this.geocoderResults.features[res]));
 
-                    if (this.geocoderResults.features[res].bbox) {
-                        this.setMarkers('hovered-bbox', turf.featureCollection([turf.bboxPolygon(this.geocoderResults.features[res].bbox)]));
-                    }
+                    // if (this.geocoderResults.features[res].bbox) {
+                    //     this.setMarkers('hovered-bbox', turf.featureCollection([turf.bboxPolygon(this.geocoderResults.features[res].bbox)]));
+                    // }
                 }
             },
             resultLeave: function(e) {
@@ -696,22 +712,30 @@ window.onload = () => {
                 }
             },
             resultClick: function(e) {
-                if (!this.cnf.onDebug) {
+                if(this.cnf.type === 'address') {
                     let res = parseInt(e.target.getAttribute('result'));
+                    let queryId = this.suggestResults[res].id;
 
-                    //Set query to saved result
-                    if (this.geocoderResults.features[res].id === 'saved') {
-                        this.query = this.geocoderResults.features[res].place_name;
-                    } else {
-                        this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[res]));
+                    let env = this.cnf.staging ? 'staging' : 'production';
+                    const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
+                    const  accessToken = this.credentials[env][tokenKey];
+    
+                    let url = `${this.credentials[env].retrieveUrl}/${queryId}?access_token=${accessToken}`;
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('GET', url);
+                    xhr.onload = () => {
+                        this.geocoderResults.features.splice(0, this.geocoderResults.features.length); //Clear Results
+                        this.suggestResults.splice(0, this.suggestResults.length); //Clear Results
 
-                        if (this.geocoderResults.features[res].bbox) {
-                            this.map.fitBounds(this.geocoderResults.features[res].bbox, {
-                                animate: false,
-                                padding: 20
-                            });
+                        if (xhr.status !== 200) {
+                            //TODO ERROR HANDLING
                         } else {
-                            let type = this.geocoderResults.features[res].id.split('.')[0];
+                            let feat = JSON.parse(xhr.responseText)[0].features[0];
+                            this.geocoderResults.features.push(feat);
+
+                            this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[0]));
+
+                            let type = this.geocoderResults.features[0].properties.place_type[0];
 
                             let max = 16;
                             if (type === "street") max = 15;
@@ -725,11 +749,47 @@ window.onload = () => {
                                 center: this.geocoderResults.features[res].geometry.coordinates,
                                 zoom: max
                             });
-                        }
 
-                        //Add to saved queries list (max 5)
-                        this.saved.push(this.geocoderResults.features[res].place_name);
-                        if (this.saved.length > 5) this.saved.shift();
+                            // this.searchClear();
+                        }
+                    }
+                    xhr.send();
+                } else {
+                    if (!this.cnf.onDebug) {
+                        let res = parseInt(e.target.getAttribute('result'));
+
+                        //Set query to saved result
+                        if (this.geocoderResults.features[res].id === 'saved') {
+                            this.query = this.geocoderResults.features[res].place_name;
+                        } else {
+                            this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[res]));
+
+                            if (this.geocoderResults.features[res].bbox) {
+                                this.map.fitBounds(this.geocoderResults.features[res].bbox, {
+                                    animate: false,
+                                    padding: 20
+                                });
+                            } else {
+                                let type = this.geocoderResults.features[res].id.split('.')[0];
+
+                                let max = 16;
+                                if (type === "street") max = 15;
+                                else if (type === "locality") max = 14;
+                                else if (type === "place" || type === "city") max = 13;
+                                else if (type === "district") max = 9;
+                                else if (type === "region") max = 6;
+                                else if (type === "country") max = 4;
+
+                                this.map.jumpTo({
+                                    center: this.geocoderResults.features[res].geometry.coordinates,
+                                    zoom: max
+                                });
+                            }
+
+                            //Add to saved queries list (max 5)
+                            this.saved.push(this.geocoderResults.features[res].place_name);
+                            if (this.saved.length > 5) this.saved.shift();
+                        }
                     }
                 }
             },
