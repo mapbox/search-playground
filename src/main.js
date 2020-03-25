@@ -609,7 +609,6 @@ window.onload = () => {
                                 for (let sugg of JSON.parse(xhr.responseText)) {
                                     this.suggestResults.push(sugg);
                                 }
-                                console.log(this.suggestResults[0]);
                             } else {
                                 for (let feat of JSON.parse(xhr.responseText).features) {
                                     this.geocoderResults.features.push(feat);
@@ -698,12 +697,12 @@ window.onload = () => {
                     let res = parseInt(e.target.getAttribute('result'));
 
                     //Saved results are special as they are just text - don't perform any action on hover
-                    if (this.geocoderResults.features[res].id === 'saved') return;
-                    this.setMarkers('hovered', this.toFeatureCollection(this.geocoderResults.features[res]));
+                    // if (this.geocoderResults.features[res].id === 'saved') return;
+                    // this.setMarkers('hovered', this.toFeatureCollection(this.geocoderResults.features[res]));
 
-                    if (this.geocoderResults.features[res].bbox) {
-                        this.setMarkers('hovered-bbox', turf.featureCollection([turf.bboxPolygon(this.geocoderResults.features[res].bbox)]));
-                    }
+                    // if (this.geocoderResults.features[res].bbox) {
+                    //     this.setMarkers('hovered-bbox', turf.featureCollection([turf.bboxPolygon(this.geocoderResults.features[res].bbox)]));
+                    // }
                 }
             },
             resultLeave: function(e) {
@@ -713,22 +712,30 @@ window.onload = () => {
                 }
             },
             resultClick: function(e) {
-                if (!this.cnf.onDebug) {
+                if(this.cnf.type === 'address') {
                     let res = parseInt(e.target.getAttribute('result'));
+                    let queryId = this.suggestResults[res].id;
 
-                    //Set query to saved result
-                    if (this.geocoderResults.features[res].id === 'saved') {
-                        this.query = this.geocoderResults.features[res].place_name;
-                    } else {
-                        this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[res]));
+                    let env = this.cnf.staging ? 'staging' : 'production';
+                    const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
+                    const  accessToken = this.credentials[env][tokenKey];
+    
+                    let url = `${this.credentials[env].retrieveUrl}/${queryId}?access_token=${accessToken}`;
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('GET', url);
+                    xhr.onload = () => {
+                        this.geocoderResults.features.splice(0, this.geocoderResults.features.length); //Clear Results
+                        this.suggestResults.splice(0, this.suggestResults.length); //Clear Results
 
-                        if (this.geocoderResults.features[res].bbox) {
-                            this.map.fitBounds(this.geocoderResults.features[res].bbox, {
-                                animate: false,
-                                padding: 20
-                            });
+                        if (xhr.status !== 200) {
+                            //TODO ERROR HANDLING
                         } else {
-                            let type = this.geocoderResults.features[res].id.split('.')[0];
+                            let feat = JSON.parse(xhr.responseText)[0].features[0];
+                            this.geocoderResults.features.push(feat);
+
+                            this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[0]));
+
+                            let type = this.geocoderResults.features[0].properties.place_type[0];
 
                             let max = 16;
                             if (type === "street") max = 15;
@@ -742,11 +749,47 @@ window.onload = () => {
                                 center: this.geocoderResults.features[res].geometry.coordinates,
                                 zoom: max
                             });
-                        }
 
-                        //Add to saved queries list (max 5)
-                        this.saved.push(this.geocoderResults.features[res].place_name);
-                        if (this.saved.length > 5) this.saved.shift();
+                            // this.searchClear();
+                        }
+                    }
+                    xhr.send();
+                } else {
+                    if (!this.cnf.onDebug) {
+                        let res = parseInt(e.target.getAttribute('result'));
+
+                        //Set query to saved result
+                        if (this.geocoderResults.features[res].id === 'saved') {
+                            this.query = this.geocoderResults.features[res].place_name;
+                        } else {
+                            this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[res]));
+
+                            if (this.geocoderResults.features[res].bbox) {
+                                this.map.fitBounds(this.geocoderResults.features[res].bbox, {
+                                    animate: false,
+                                    padding: 20
+                                });
+                            } else {
+                                let type = this.geocoderResults.features[res].id.split('.')[0];
+
+                                let max = 16;
+                                if (type === "street") max = 15;
+                                else if (type === "locality") max = 14;
+                                else if (type === "place" || type === "city") max = 13;
+                                else if (type === "district") max = 9;
+                                else if (type === "region") max = 6;
+                                else if (type === "country") max = 4;
+
+                                this.map.jumpTo({
+                                    center: this.geocoderResults.features[res].geometry.coordinates,
+                                    zoom: max
+                                });
+                            }
+
+                            //Add to saved queries list (max 5)
+                            this.saved.push(this.geocoderResults.features[res].place_name);
+                            if (this.saved.length > 5) this.saved.shift();
+                        }
                     }
                 }
             },
