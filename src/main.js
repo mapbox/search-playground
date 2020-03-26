@@ -249,16 +249,14 @@ window.onload = () => {
                 }
                 xhr.send();
             },
-            updateHash: function() {
-                //Update URL hash
-                let cnf = JSON.parse(JSON.stringify(this.cnf));
-                cnf.query = this.query;
-
-                window.location.hash = JSON.stringify(cnf);
+            updateQueryString: function() {
+                // Update URL search
+                let cnf = Object.keys(this.cnf).map(key => key + '=' + this.cnf[key]).join('&');
+                window.history.replaceState( {} , '/?', `?${cnf}` );
             },
             search: function() {
                 let searchTime = new Date();
-                this.updateHash();
+                this.updateQueryString();
                 // this.updateBBOX();
 
                 if (this.query.length === 0) return;
