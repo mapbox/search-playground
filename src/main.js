@@ -375,8 +375,7 @@ window.onload = () => {
                 let searchType = e.target.value;
                 // this.cnf.typeToggle[type] = !this.cnf.typeToggle[type];
                 this.cnf.type = searchType;
-                // if (this.cnf.types.indexOf(type) === -1) this.cnf.types.push(type);
-                // else this.cnf.types.splice(this.cnf.types.indexOf(type), 1);
+                this.searchClear();
             },
             typeClearAll: function(e) {
                 for (let typeName in this.cnf.typeToggle) {
@@ -450,7 +449,7 @@ window.onload = () => {
                             else if (type === "country") max = 4;
 
                             this.map.jumpTo({
-                                center: this.geocoderResults.features[res].geometry.coordinates,
+                                center: this.geocoderResults.features[0].geometry.coordinates,
                                 zoom: max
                             });
 
@@ -474,19 +473,9 @@ window.onload = () => {
                                     padding: 20
                                 });
                             } else {
-                                let type = this.geocoderResults.features[res].id.split('.')[0];
-
-                                let max = 16;
-                                if (type === "street") max = 15;
-                                else if (type === "locality") max = 14;
-                                else if (type === "place" || type === "city") max = 13;
-                                else if (type === "district") max = 9;
-                                else if (type === "region") max = 6;
-                                else if (type === "country") max = 4;
-
                                 this.map.jumpTo({
                                     center: this.geocoderResults.features[res].geometry.coordinates,
-                                    zoom: max
+                                    zoom: 15
                                 });
                             }
 
