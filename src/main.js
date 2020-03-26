@@ -214,8 +214,6 @@ window.onload = () => {
             'cnf.types': function() { return this.search(); },
             'cnf.onProximity': function() { return this.search(); },
             'cnf.proximity': function() { return this.search(); },
-            'cnf.onBBOX': function() { return this.search(); },
-            'cnf.bbox': function() { return this.search(); },
             'cnf.onLimit': function() { return this.search(); },
             'cnf.limit': function() { return this.search(); },
             'cnf.autocomplete': function() { return this.search(); },
@@ -230,15 +228,6 @@ window.onload = () => {
             help: function(url = 'https://docs.mapbox.com/api/search/#forward-geocoding') {
                 window.open(url, '_blank');
             },
-
-            //Reset settings to their defalt values
-            resetCnf: function() {
-                const cnf = JSON.parse(this.defaultCnf);
-                for (let key of Object.keys(cnf)) {
-                    this.cnf[key] = cnf[key];
-                }
-            },
-
             setStyle: function(style) {
                 this.map.setStyle(style);
             },
@@ -389,10 +378,6 @@ window.onload = () => {
                 });
             },
             proximityManualClick: function(e) {
-                if (this.buildingBBox) {
-                    this.buildingBBox = false;
-                    this.map.removeControl(this.draw);
-                }
                 this.getlocation = true;
             },
 
