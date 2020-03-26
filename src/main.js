@@ -99,22 +99,15 @@ window.onload = () => {
             layers: [],
             defaultCnf: '', //Stores a stringified version of below for resetting to default state
             cnf: {
-                url: '',
                 onType: true,
                 onProximity: true,
-                onBBOX: true,
                 onLimit: true,
                 onLanguage: true,
                 proximity: '4.433592,50.878676',
                 type: 'address',
-                bbox: '',
                 limit: '5',
                 languages: [],
-                onDebug: false,
-                selectedLayer: '',
-                debugClick: {},
             },
-            buildingBBox: false,
             hostname: location.hostname,
             getlocation: false,
             jsonPanel: false,
@@ -418,7 +411,7 @@ window.onload = () => {
                     let env = this.cnf.staging ? 'staging' : 'production';
                     const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
                     const  accessToken = this.credentials[env][tokenKey];
-    
+
                     let url = `${this.credentials[env].retrieveUrl}/${queryId}?access_token=${accessToken}`;
                     let xhr = new XMLHttpRequest();
                     xhr.open('GET', url);
