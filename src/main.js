@@ -175,11 +175,6 @@ window.onload = () => {
                     });
                     this.map.addControl(scale);
 
-                    this.$watch('cnf.selectedLayer', function() {
-                        this.updateHash();
-                        // this.toggleTiles();
-                    }, { immediate: true });
-
                     this.$watch('geocoderResults.features', function() {
                         this.setMarkers('markers', this.geocoderResults);
                     }, { immediate: true });
