@@ -116,28 +116,20 @@ window.onload = () => {
         },
         // Called synchronously after the Vue instance is created https://vuejs.org/v2/api/#created
         created: function() {
-            this.defaultCnf = JSON.stringify(this.cnf);
-
+            this.defaultCnf = Object.keys(this.cnf).map(key => key + '=' + this.cnf[key]).join('&');
             let saved = localStorage.getItem('saved');
-            if (saved) this.saved = JSON.parse(saved);
-
-            // Set state to hashed value
-            if (window.location.hash) {
-                this.fitZoom = true;
-                let cnf = JSON.parse(decodeURIComponent(window.location.hash.substring(1, window.location.hash.length)));
-                // Populate the query form separately from other cnf properties
-                // query is part of the Vue's data property, not the cnf
-                this.query = cnf.query;
-                delete cnf.query;
-
-                for (let c in cnf) {
-                    this.cnf[c] = cnf[c];
-                }
+            if (saved) this.saved = saved;
+            // Set state to search value
+            if (window.location.search) {
+                let urlParams = new URLSearchParams(window.location.search)
+                urlParams.forEach((v, k) => {
+                  v = v !== '' ? v : undefined;
+                  this.cnf[k] = v;
+                })
             }
         },
         // Called after the instance has been mounted-- now ready to add map
         mounted: function() {
-
             this.$nextTick(function() {
                 mapboxgl.accessToken = this.credentials.map.key;
                 this.map = new mapboxgl.Map({
