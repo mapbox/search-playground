@@ -301,8 +301,10 @@ window.onload = () => {
                 if(this.cnf.type === 'address') {
                     url = `${this.credentials[env].suggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
                     url = `${url}&limit=5`;
-                } else if(this.cnf.type === 'poi') {
+                } else if(this.cnf.type === 'poi-search') {
                     url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                } else if(this.cnf.type === 'poi-category') {
+                    url = `${this.credentials[env].poiUrl}/category/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
                 }
                 // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
                 // url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
@@ -373,8 +375,7 @@ window.onload = () => {
                 let searchType = e.target.value;
                 // this.cnf.typeToggle[type] = !this.cnf.typeToggle[type];
                 this.cnf.type = searchType;
-                // if (this.cnf.types.indexOf(type) === -1) this.cnf.types.push(type);
-                // else this.cnf.types.splice(this.cnf.types.indexOf(type), 1);
+                this.searchClear();
             },
             typeClearAll: function(e) {
                 for (let typeName in this.cnf.typeToggle) {
@@ -401,6 +402,9 @@ window.onload = () => {
                     this.map.removeControl(this.draw);
                 }
                 this.getlocation = true;
+            },
+            catClick: function(e) {
+                this.query = e.target.getAttribute('type');
             },
 
             resultEnter: function(e) {
@@ -445,7 +449,7 @@ window.onload = () => {
                             else if (type === "country") max = 4;
 
                             this.map.jumpTo({
-                                center: this.geocoderResults.features[res].geometry.coordinates,
+                                center: this.geocoderResults.features[0].geometry.coordinates,
                                 zoom: max
                             });
 
@@ -469,19 +473,9 @@ window.onload = () => {
                                     padding: 20
                                 });
                             } else {
-                                let type = this.geocoderResults.features[res].id.split('.')[0];
-
-                                let max = 16;
-                                if (type === "street") max = 15;
-                                else if (type === "locality") max = 14;
-                                else if (type === "place" || type === "city") max = 13;
-                                else if (type === "district") max = 9;
-                                else if (type === "region") max = 6;
-                                else if (type === "country") max = 4;
-
                                 this.map.jumpTo({
                                     center: this.geocoderResults.features[res].geometry.coordinates,
-                                    zoom: max
+                                    zoom: 15
                                 });
                             }
 
