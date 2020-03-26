@@ -198,6 +198,7 @@ window.onload = () => {
             'cnf.onCountry': function() { return this.search(); },
             'cnf.countries': function() { return this.search(); },
             'cnf.onType': function() { return this.search(); },
+            'cnf.type': function() { return this.search(); },
             'cnf.types': function() { return this.search(); },
             'cnf.onProximity': function() { return this.search(); },
             'cnf.proximity': function() { return this.search(); },
