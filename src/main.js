@@ -418,41 +418,39 @@ window.onload = () => {
                     }
                     xhr.send();
                 } else {
-                    if (!this.cnf.onDebug) {
-                        let res = parseInt(e.target.getAttribute('result'));
+                    let res = parseInt(e.target.getAttribute('result'));
 
-                        //Set query to saved result
-                        if (this.geocoderResults.features[res].id === 'saved') {
-                            this.query = this.geocoderResults.features[res].place_name;
+                    //Set query to saved result
+                    if (this.geocoderResults.features[res].id === 'saved') {
+                        this.query = this.geocoderResults.features[res].place_name;
+                    } else {
+                        this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[res]));
+
+                        if (this.geocoderResults.features[res].bbox) {
+                            this.map.fitBounds(this.geocoderResults.features[res].bbox, {
+                                animate: false,
+                                padding: 20
+                            });
                         } else {
-                            this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[res]));
+                            let type = this.geocoderResults.features[res].id.split('.')[0];
 
-                            if (this.geocoderResults.features[res].bbox) {
-                                this.map.fitBounds(this.geocoderResults.features[res].bbox, {
-                                    animate: false,
-                                    padding: 20
-                                });
-                            } else {
-                                let type = this.geocoderResults.features[res].id.split('.')[0];
+                            let max = 16;
+                            if (type === "street") max = 15;
+                            else if (type === "locality") max = 14;
+                            else if (type === "place" || type === "city") max = 13;
+                            else if (type === "district") max = 9;
+                            else if (type === "region") max = 6;
+                            else if (type === "country") max = 4;
 
-                                let max = 16;
-                                if (type === "street") max = 15;
-                                else if (type === "locality") max = 14;
-                                else if (type === "place" || type === "city") max = 13;
-                                else if (type === "district") max = 9;
-                                else if (type === "region") max = 6;
-                                else if (type === "country") max = 4;
-
-                                this.map.jumpTo({
-                                    center: this.geocoderResults.features[res].geometry.coordinates,
-                                    zoom: max
-                                });
-                            }
-
-                            //Add to saved queries list (max 5)
-                            this.saved.push(this.geocoderResults.features[res].place_name);
-                            if (this.saved.length > 5) this.saved.shift();
+                            this.map.jumpTo({
+                                center: this.geocoderResults.features[res].geometry.coordinates,
+                                zoom: max
+                            });
                         }
+
+                        //Add to saved queries list (max 5)
+                        this.saved.push(this.geocoderResults.features[res].place_name);
+                        if (this.saved.length > 5) this.saved.shift();
                     }
                 }
             },
