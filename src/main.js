@@ -190,7 +190,7 @@ window.onload = () => {
         // watch functions are triggered by user interactions which change values in the `data` property
         watch: {
             saved: function() {
-                localStorage.setItem('saved', JSON.stringify(this.saved));
+                localStorage.setItem('saved', this.saved);
             },
             query: function() { return this.search(); },
             'cnf.staging': function() { return this.search(); },
