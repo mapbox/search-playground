@@ -301,8 +301,10 @@ window.onload = () => {
                 if(this.cnf.type === 'address') {
                     url = `${this.credentials[env].suggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
                     url = `${url}&limit=5`;
-                } else if(this.cnf.type === 'poi') {
+                } else if(this.cnf.type === 'poi-search') {
                     url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                } else if(this.cnf.type === 'poi-category') {
+                    url = `${this.credentials[env].poiUrl}/category/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
                 }
                 // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
                 // url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
@@ -401,6 +403,9 @@ window.onload = () => {
                     this.map.removeControl(this.draw);
                 }
                 this.getlocation = true;
+            },
+            catClick: function(e) {
+                this.query = e.target.getAttribute('type');
             },
 
             resultEnter: function(e) {

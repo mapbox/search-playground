@@ -34,7 +34,17 @@
         <div id='app' class='relative'>
             <div class='grid grid--gut12 py12 px12 bg-default'>
                 <div class='col col--8 col--4-mm relative'>
-                    <template v-if='!cnf.onDebug'>
+                    <template v-if='cnf.type === "poi-category"'>
+                        <div class="col col--12 px48">
+                            <!-- <button @click="catClick" type='food' :class="{ 'btn--stroke': !cnf.typeToggle.country }" class='btn my3'>food</button> -->
+                            <button @click="catClick" type='food' class='btn my3'>food</button>
+                            <button @click="catClick" type='coffee' class='btn my3'>coffee</button>
+                            <button @click="catClick" type='bar' class='btn my3'>bar</button>
+                            <button @click="catClick" type='gas' class='btn my3'>gas</button>
+                            <button @click="catClick" type='hotel' class='btn my3'>hotel</button>
+                        </div>
+                    </template>
+                    <template v-else>
                         <div class='absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'><use href='#icon-search'></use></svg></div>
                         <input v-model='query' @focus='searchFocus' class='input bg-white px36' placeholder='Search'>
                         <div @click='searchClear' class='cursor-pointer absolute top right flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'><use href='#icon-close'></use></svg></div>
@@ -70,10 +80,10 @@
                         <!--Proximity Filter-->
                         <div class='col col--12'>
                             <div class="col col--12 py12">
-                                <label class='switch-container fl pr12'>
+                                <!-- <label class='switch-container fl pr12'>
                                     <input v-model="cnf.onProximity" type='checkbox' checked/>
                                     <div class='switch'></div>
-                                </label>
+                                </label> -->
                                 <h3 class='txt-h4'>Proximity Bias <svg @click="help()" class='fr ml12 icon cursor-pointer color-gray-light color-gray-dark-on-hover'><use href='#icon-info'/></svg></h3>
                             </div>
 
@@ -85,8 +95,8 @@
                         </div>
 
                         <!-- Types Filter -->
-                        <div class='col col--12'>
-
+                        <div class='col col--12 py12'>
+                            <h3 class='txt-h4'>Search type</h3>
                             <div class="col col--12 px48">
                                <div class="toggle-group mr48 py12">
                                     <label class="toggle-container">
@@ -94,8 +104,12 @@
                                         <div class="toggle">Address</div>
                                     </label>
                                     <label class="toggle-container">
-                                        <input name='toggle-1' @click="typeClick" type='radio' value="poi"/>
-                                        <div class="toggle">POI</div>
+                                        <input name='toggle-1' @click="typeClick" type='radio' value="poi-search"/>
+                                        <div class="toggle">POI Search</div>
+                                    </label>
+                                    <label class="toggle-container">
+                                        <input name='toggle-1' @click="typeClick" type='radio' value="poi-category"/>
+                                        <div class="toggle">POI Category</div>
                                     </label>
                                 </div>
                             </div>
