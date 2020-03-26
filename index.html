@@ -47,10 +47,6 @@
                     <button @click="bugReport" v-tooltip="'Found a bug?'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-bug'></use></svg></button>
                     <button @click="shareClick" v-tooltip="'Open API URL'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-share'/></svg></button>
                     <button @click="panelManage('json')" v-tooltip="'Toggle JSON Panel'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-code'/></svg></button>
-                    <template v-if= "credentials.debug.authed">
-                    <button @click="hecate" v-tooltip="'Open View in Hecate'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-osm'/></svg></button>
-                    <button @click="josm" v-tooltip="'Open View in JOSM'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-pencil'/></svg></button>
-                    </template>
                 </div>
             </div>
             <!-- Settings -->
@@ -68,39 +64,8 @@
                         </div>
                     </template>
 
-                    <!-- <div class='col col--12 py12'>
-                        <div class='grid grid--gut12'>
-                            <div class='col col--10'>
-                                <input v-model='cnf.url' class='input' id='bboxInput' type='text' placeholder='Parse settings from Mapbox Geocoding API URL'/>
-                            </div>
-                            <div class='col col--2'>
-                                <button @click='parseURL' class='btn round w-full'>Parse</button>
-                            </div>
-                        </div>
-                    </div> -->
 
                     <div class='col col--12'>
-
-                        <!--Internal Functions-->
-                        <!-- <div v-if="credentials.debug.authed" class='col col--12'>
-                            <div class='grid grid--gut12 py12'>
-                                <div class='col col--6'>
-                                    <label class='switch-container fl pr12'>
-                                        <input v-model='cnf.staging' type='checkbox'/>
-                                        <div class='switch'></div>
-                                    </label>
-                                    <h3 class='txt-h4'>Staging Server</h3>
-                                </div>
-
-                                <div class='col col--6'>
-                                    <label class='switch-container fl pr12'>
-                                        <input v-model='cnf.approx' type='checkbox'/>
-                                        <div class='switch'></div>
-                                    </label>
-                                    <h3 class='txt-h4'>Smarty Federation</h3>
-                                </div>
-                            </div>
-                        </div> -->
 
                         <!--Proximity Filter-->
                         <div class='col col--12'>
@@ -121,28 +86,9 @@
 
                         <!-- Types Filter -->
                         <div class='col col--12'>
-                            <!-- <div class='col col--12 py12'>
-                                <div>
-                                    <label class='switch-container fl pr12'>
-                                        <input v-model='cnf.onType' type='checkbox' checked/>
-                                        <div class='switch'></div>
-                                    </label>
-                                    <span class='txt-h4'>Type Filtering <svg @click="help()" class='fr ml12 icon cursor-pointer color-gray-light color-gray-dark-on-hover'><use href='#icon-info'/></svg></map>
-                                    <button @click='typeClearAll' class='btn btn--stroke btn--xs fr px12 mr48 btn--darken50'>Clear All</button>
-                                    <button @click='typeAddAll' class='btn btn--stroke btn--xs fr px12 mx3 btn--darken50'>Add All</button>
-                                </div>
-
-                            </div> -->
 
                             <div class="col col--12 px48">
-                                <!-- <button @click="typeClick" type='country' :class="{ 'btn--stroke': !cnf.typeToggle.country }" class='btn my3'>Country</button>
-                                <button @click="typeClick" type='region' :class="{ 'btn--stroke': !cnf.typeToggle.region }" class='btn my3'>Region</button>
-                                <button @click="typeClick" type='district' :class="{ 'btn--stroke': !cnf.typeToggle.district }" class='btn my3'>District</button>
-                                <button @click="typeClick" type='postcode' :class="{ 'btn--stroke': !cnf.typeToggle.postcode }" class='btn my3'>Postcode</button>
-                                <button @click="typeClick" type='locality' :class="{ 'btn--stroke': !cnf.typeToggle.locality }" class='btn my3'>Locality</button>
-                                <button @click="typeClick" type='place' :class="{ 'btn--stroke': !cnf.typeToggle.place }" class='btn my3'>Place</button>
-                                <button @click="typeClick" type='neighborhood' :class="{ 'btn--stroke': !cnf.typeToggle.neighborhood }" class='btn my3'>Neighborhood</button> -->
-                                <div class="toggle-group mr48 py12">
+                               <div class="toggle-group mr48 py12">
                                     <label class="toggle-container">
                                         <input checked name='toggle-1' @click="typeClick" type='radio' value="address" />
                                         <div class="toggle">Address</div>
@@ -154,37 +100,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Country Filter -->
-                        <!-- <div class='col col--12'>
-                            <div class='col col--12 py12'>
-                                <label class='switch-container fl pr12'>
-                                    <input v-model='cnf.onCountry' type='checkbox' checked/>
-                                    <div class='switch'></div>
-                                </label>
-                                <h3 class='txt-h4'>Country Filtering <svg @click="help()" class='fr ml12 icon cursor-pointer color-gray-light color-gray-dark-on-hover'><use href='#icon-info'/></svg></h3>
-                            </div>
-
-                            <div class='col col--12 px48'>
-                                <multiselect v-model='cnf.countries' :options='countries' @search-change='countryFind' placeholder='Filter' :taggable='true' :multiple='true'  track-by='code' label='name'></multiselect>
-                            </div>
-                        </div> -->
-
-                        <!--BBOX Filter-->
-                        <!-- <div class='col col--12'>
-                            <div class="col col--12 py12">
-                                <label class='switch-container fl pr12'>
-                                    <input v-model="cnf.onBBOX" type='checkbox' checked/>
-                                    <div class='switch'></div>
-                                </label>
-                                <h3 class='txt-h4'>BBOX Filter <svg @click="help()" class='fr ml12 icon cursor-pointer color-gray-light color-gray-dark-on-hover'><use href='#icon-info'/></svg></h3>
-                            </div>
-
-                            <div class="col col--12 px48 relative">
-                                <div @click="bboxDraw" class='cursor-pointer absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><span v-tooltip="'Draw BBOX manually'"><svg class='icon'><use href='#icon-viewport'></use></svg></span></div>
-                                <input v-model="cnf.bbox" class="input px36" id='bboxInput' type='text' placeholder='minX,minY,maxX,maxY'/>
-                            </div>
-                        </div> -->
 
                         <!--Limit-->
                         <!-- <div class='col col--12'>
@@ -198,17 +113,6 @@
 
                             <div class="col col--12 px48">
                                 <input v-model="cnf.limit" class="input" type='number' min='1' max='10' placeholder='Up to 5 for reverse, up to 10 for forward' class='stretch' />
-                            </div>
-                        </div> -->
-
-                        <!--Autocomplete Toggle-->
-                        <!-- <div class='col col--12'>
-                            <div class="col col--12 py12">
-                                <label class='switch-container fl pr12'>
-                                    <input v-model="cnf.autocomplete" type='checkbox' checked/>
-                                    <div class='switch'></div>
-                                </label>
-                                <h3 class='txt-h4'>Autocomplete <svg @click="help()" class='fr ml12 icon cursor-pointer color-gray-light color-gray-dark-on-hover'><use href='#icon-info'/></svg></h3>
                             </div>
                         </div> -->
 
@@ -227,58 +131,6 @@
                             </div>
                         </div> -->
 
-                        <!--Strict LanguageMode Toggle-->
-                        <!-- <div class='col col--12'>
-                            <div class="col col--12 py12">
-                                <label class='switch-container fl pr12'>
-                                    <input v-model="cnf.languageStrict" type='checkbox'/>
-                                    <div class='switch'></div>
-                                </label>
-                                <h3 class='txt-h4'>Strict Language Mode <svg @click="help()" class='fr ml12 icon cursor-pointer color-gray-light color-gray-dark-on-hover'><use href='#icon-info'/></svg></h3>
-                            </div>
-                        </div> -->
-
-                        <!--Debug mode-->
-                        <!-- Only visible once temporary token has been retrieved -->
-                        <!-- <div class='col col--12' v-if="credentials.debug.authed"> -->
-                            <!-- Toggle -->
-                            <!-- <div class="col col--12 py12">
-                                <label class='switch-container fl pr12'>
-                                    <input v-model="cnf.onDebug" type='checkbox'/>
-                                    <div class='switch'></div>
-                                </label>
-                                <h3 class='txt-h4'>Debug Mode</h3>
-                            </div> -->
-                            <!--Tile Layer Filter-->
-                            <!-- TODO: allow user to select multiple layers -->
-                            <!-- <div class="col col--12 py12">
-                                <div class="col col--12 px48">
-                                    <multiselect v-model="cnf.selectedLayer" :options="layers" placeholder="Layers" :multiple="false"></multiselect>
-                                </div>
-                            </div> -->
-                        <!-- </div> -->
-
-                        <!--routing Toggle-->
-                        <!-- <div class='col col--12'>
-                            <div class="col col--12 py12">
-                                <label class='switch-container fl pr12'>
-                                    <input v-model="cnf.routing" type='checkbox'/>
-                                    <div class='switch'></div>
-                                </label>
-                                <h3 class='txt-h4'><span>Routable Points<span><span class='ml12 txt-s color-red-light color-red-dark-on-hover'>ALPHA<span></h3>
-                            </div>
-                        </div> -->
-
-                        <!--local search Toggle-->
-                        <!-- <div class='col col--12'>
-                            <div class="col col--12 py12">
-                                <label class='switch-container fl pr12'>
-                                    <input v-model="cnf.localsearch" type='checkbox'/>
-                                    <div class='switch'></div>
-                                </label>
-                                <h3 class='txt-h4' v-tooltip='"Local search available by contacting Mapbox Support"'><span>Local Search<span><span class='ml12 txt-s color-red-light color-red-dark-on-hover'>BETA<span></h3>
-                            </div>
-                        </div> -->
 
                     </div>
                 </div>

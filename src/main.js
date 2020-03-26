@@ -12,29 +12,13 @@ window.onload = () => {
         data: {
             credentials: {
                 production: {
-                    url: 'https://api.mapbox.com/geocoding/v5',
-                    key: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g',
-                    key_hiero_federation: 'pk.eyJ1IjoiYXBleHNlYXJjaHVzZXIiLCJhIjoiY2pxc2V6bjVyMHVxcjQ4cXE4cmg1a242diJ9.TMZ9oWhH_fF4ccYkaMeyAw',
                     suggestUrl: 'http://search-federation-production.tilestream.net/api/v1/suggest',
                     retrieveUrl: 'http://search-federation-production.tilestream.net/api/v1/retrieve',
                     poiUrl: 'https://api-poi-search-production.mapbox.com',
                     key_federation: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g'
                 },
-                staging: {
-                    url: process.env.DEPLOY_ENV === 'local' ? 'http://localhost:8000/geocoding/v5': 'https://api-geocoder-staging.tilestream.net/geocoding/v5',
-                    key: process.env.DEPLOY_ENV === 'local' ? 'pk.eyJ1IjoiYXBpa2V5dXNlciIsImEiOiJhYmNkZWZnIn0.ENonA568sn1Xp32NR6CvxA': false,
-                    authed: process.env.DEPLOY_ENV === 'local' ? true : false
-                },
                 map: {
                     key: 'pk.eyJ1Ijoic2JtYTQ0IiwiYSI6ImNpcXNycTNqaTAwMDdmcG5seDBoYjVkZGcifQ.ZVIe6sjh0QGeMsHpBvlsEA'
-                },
-                debug: {
-                    url: 'https://api.mapbox.com/geocoding/v5/tiles',
-                    key: '',
-                    authed: process.env.DEPLOY_ENV === 'local' ? true : false
-                },
-                heyProxy: {
-                    url: 'https://hey.mapbox.com/search-playground/geocoding-debug'
                 },
             },
 
@@ -42,18 +26,14 @@ window.onload = () => {
             // zoom the map to the bbox extent of the results
             fitZoom: false,
             bbox: { type: 'FeatureCollection', features: [] },
-            // reverse: false,
             query: '',
             url: '',
             urlview: false, //Show URL in settings panel
             saved: [],
-            // reverseMarker: false, //Store the GL Click marker for a reverse Geocode
             suggestResults: [],
             // Results from forward or reverse geocoding queries
             geocoderResults: { type: 'FeatureCollection', features: [] },
             // Results from querying vector tiles
-            // vtQueryResults: { type: 'FeatureCollection', features: [] },
-            countries: [],
             languages: [
                 { code: 'ar', name: 'Arabic' },
                 { code: 'az', name: 'Azerbaijani' },
@@ -120,39 +100,19 @@ window.onload = () => {
             defaultCnf: '', //Stores a stringified version of below for resetting to default state
             cnf: {
                 url: '',
-                index: 'mapbox.places',
-                approx: true,
-                staging: false,
-                onCountry: true,
                 onType: true,
                 onProximity: true,
                 onBBOX: true,
                 onLimit: true,
                 onLanguage: true,
-                countries: [],
                 proximity: '4.433592,50.878676',
-                // typeToggle: {
-                //     // 'country': false,
-                //     // 'region': false,
-                //     // 'district': false,
-                //     // 'postcode': false,
-                //     // 'locality': false,
-                //     // 'place': false,
-                //     // 'neighborhood': false,
-                //     'address': true,
-                //     'poi': false,
-                // },
                 type: 'address',
-                // types: [],
                 bbox: '',
                 limit: '5',
-                autocomplete: true,
                 languages: [],
-                languageStrict: false,
                 onDebug: false,
                 selectedLayer: '',
                 debugClick: {},
-                localsearch: false
             },
             buildingBBox: false,
             hostname: location.hostname,
@@ -184,11 +144,6 @@ window.onload = () => {
         },
         // Called after the instance has been mounted-- now ready to add map
         mounted: function() {
-            this.retrieveToken();
-
-            if (!this.credentials.staging.key && this.hostname === 'hey.mapbox.com') {
-                this.retrieveStaging();
-            }
 
             this.$nextTick(function() {
                 mapboxgl.accessToken = this.credentials.map.key;
@@ -235,36 +190,10 @@ window.onload = () => {
                     });
                     this.map.addControl(scale);
 
-                    this.$watch('cnf.onDebug', function(val) {
-                        this.updateHash();
-                        this.toggleTiles();
-                        if (val) {
-                            if (this.cnf.debugClick.coords && this.cnf.debugClick.coords.length === 2) {
-                                this.setMarkers('debug', turf.featureCollection([turf.point(this.cnf.debugClick.coords)]));
-                            }
-                            for (let src of ['markers', 'selected', 'hovered', 'hovered-bbox']) {
-                                this.clearMarkers(src);
-                            }
-                        } else {
-                            this.clearMarkers('debug');
-                            this.setMarkers('markers', this.geocoderResults);
-                        }
-                    }, { immediate: true });
-
                     this.$watch('cnf.selectedLayer', function() {
                         this.updateHash();
-                        this.toggleTiles();
+                        // this.toggleTiles();
                     }, { immediate: true });
-
-                    this.$watch('cnf.debugClick', function() {
-                        this.updateHash();
-                        if (this.cnf.debugClick.coords && this.cnf.debugClick.coords.length === 2) {
-                            this.setMarkers('debug', turf.featureCollection([turf.point(this.cnf.debugClick.coords)]));
-                        }
-                        if (this.checkTiles()) {
-                            this.queryTiles(this.cnf.debugClick.pixels);
-                        }
-                    }, { deep: true, immediate: true });
 
                     this.$watch('geocoderResults.features', function() {
                         this.setMarkers('markers', this.geocoderResults);
@@ -276,22 +205,6 @@ window.onload = () => {
 
                 });
 
-                // this.map.on('click', (e) => {
-                //     if (!this.buildingBBox) {
-                //         let pt = e.lngLat.wrap();
-                //         if (this.cnf.onDebug) {
-                //             this.cnf.debugClick = {
-                //                 coords: [pt.lng, pt.lat],
-                //                 pixels: [e.point.x, e.point.y]
-                //             }
-                //         } else if (this.getlocation) {
-                //             this.cnf.proximity = `${pt.lng},${pt.lat}`;
-                //             this.getlocation = false;
-                //         } else {
-                //             this.query = `${pt.lng},${pt.lat}`;
-                //         }
-                //     }
-                // });
             });
         },
         // watch functions are triggered by user interactions which change values in the `data` property
@@ -324,61 +237,7 @@ window.onload = () => {
             help: function(url = 'https://docs.mapbox.com/api/search/#forward-geocoding') {
                 window.open(url, '_blank');
             },
-            //Parse Settings from a Mapbox API URL
-            // parseURL: function() {
-            //     const url = new URL(this.cnf.url);
 
-            //     this.resetCnf();
-
-            //     const query = decodeURIComponent(url.pathname.replace(/.*\//, '').replace('.json', ''));
-
-            //     //TODO: This could be simplified by making the cnf props be identical in name
-            //     for (let entry of url.searchParams.entries()) {
-            //         if (entry[0] === 'proximity') {
-            //             this.cnf.proximity = entry[1];
-            //         } else if (entry[0] === 'types') {
-            //             const types = entry[1].split(',');
-
-            //             this.typeClearAll();
-            //             this.cnf.types = types;
-            //             for (let type of types) {
-            //                 this.cnf.typeToggle[type] = true;
-            //             }
-            //         } else if (entry[0] === 'country') {
-            //             entry[1].split(',').forEach((country) => {
-            //                 this.cnf.countries.push({
-            //                     name: country.toUpperCase(),
-            //                     code: country
-            //                 });
-            //             });
-            //         } else if (entry[0] === 'bbox') {
-            //             this.cnf.bbox = entry[1];
-            //         } else if (entry[0] === 'limit') {
-            //             this.cnf.limit = parseInt(entry[1]);
-            //         } else if (entry[0] === 'autocomplete') {
-            //             this.cnf.autocomplete = entry[1] === 'false' ? false : 'true';
-            //         } else if (entry[0] === 'language') {
-            //             entry[1].split(',').map((lang) => {
-            //                 return lang.toLowerCase();
-            //             }).forEach((lang) => {
-            //                 let found_lang;
-            //                 for (let l of this.languages) {
-            //                     if (l.code === lang) found_lang = l;
-            //                 }
-
-            //                 if (found_lang) {
-            //                     this.cnf.languages.push(found_lang);
-            //                 } else {
-            //                     this.cnf.languages.push({ name: lang, code: lang });
-            //                 }
-            //             });
-            //         } else if (entry[0] === 'languageMode' && entry[1] === 'strict') {
-            //             this.cnf.languageStrict = true;
-            //         }
-            //     }
-
-            //     this.query = query;
-            // },
             //Reset settings to their defalt values
             resetCnf: function() {
                 const cnf = JSON.parse(this.defaultCnf);
@@ -386,99 +245,9 @@ window.onload = () => {
                     this.cnf[key] = cnf[key];
                 }
             },
-            // retrieve temporary token from hey-proxy
-            retrieveToken: function() {
-                if (window.location.hostname === 'localhost') {
-                    // Show debug options on localhost
-                    this.credentials.debug.authed = true;
-                } else if (window.location.host !== 'docs.mapbox.com') {
-                    let xhr = new XMLHttpRequest();
-                    xhr.open('GET', this.credentials.heyProxy.url);
-                    xhr.onload = () => {
-                        if (Math.floor(xhr.status / 100) * 100 !== 200) return console.error(xhr.status, xhr.responseText);
-                        this.credentials.debug.key = JSON.parse(xhr.responseText).token;
-                        this.credentials.debug.authed = true;
-                        // load tile layers
-                        this.listTiles();
-                    }
-                    xhr.send();
-                }
-            },
-            retrieveStaging: function() {
-                let xhr = new XMLHttpRequest();
-                xhr.open('GET', 'https://hey.mapbox.com/search-playground/credentials');
-                xhr.onload = () => {
-                    if (Math.floor(xhr.status / 100) * 100 !== 200) return console.error(xhr.status, xhr.responseText);
 
-                    this.credentials.staging = JSON.parse(xhr.responseText).staging;
-                }
-                xhr.send();
-            },
-            // List layers for the debug multiselect form
-            listTiles: function() {
-                let xhr = new XMLHttpRequest();
-                xhr.open('GET', `${this.credentials.debug.url}?access_token=${this.credentials.debug.key}`);
-                xhr.onload = () => {
-                    if (xhr.status !== 200) return console.error(xhr.status, xhr.responseText);
-                    this.layers = JSON.parse(xhr.responseText);
-                }
-                xhr.send();
-            },
             setStyle: function(style) {
                 this.map.setStyle(style);
-            },
-            addTiles: function() {
-                // have to add the source every time because the vt layer changes
-                this.map.addSource('geocoderFeatures', {
-                    type: 'vector',
-                    tiles: [`${this.credentials.debug.url}/${this.cnf.selectedLayer}/{z}/{x}/{y}.vector.pbf?access_token=${this.credentials.debug.key}`]
-                });
-                this.map.addLayer({
-                    'id': 'pointFeatures',
-                    'type': 'circle',
-                    'source-layer': 'data',
-                    'source': 'geocoderFeatures',
-                    "filter": ["==", "$type", "Point"],
-                    'metadata': {},
-                    'paint': { 'circle-radius': 5, 'circle-color': '#8658C4' }
-
-                }, 'point'); // point vt layers should be underneath other custom map layers
-                this.map.addLayer({
-                    'id': 'polygonFeatures',
-                    'type': 'fill', // circle
-                    'source-layer': 'data',
-                    'source': 'geocoderFeatures',
-                    "filter": ["==", "$type", "Polygon"],
-                    'metadata': {},
-                    'paint': { 'fill-opacity': 0.35, 'fill-color': '#8658C4', }
-                }, 'pointFeatures'); // polygon vt layers should be underneath point vt layers
-            },
-            removeTiles: function() {
-                this.map.removeLayer('pointFeatures');
-                this.map.removeLayer('polygonFeatures');
-                this.map.removeSource('geocoderFeatures');
-            },
-            checkTiles: function() {
-                return (!!(this.map.getLayer('pointFeatures') && this.map.getLayer('polygonFeatures')));
-            },
-            toggleTiles: function() {
-                this.updateHash();
-                if (this.cnf.onDebug) {
-                    if (this.cnf.selectedLayer) {
-                        if (this.checkTiles()) {
-                            this.removeTiles();
-                            this.addTiles();
-                        } else this.addTiles();
-                    } else if (this.checkTiles()) this.removeTiles();
-                } else if (this.checkTiles()) this.removeTiles();
-            },
-            queryTiles: function(pixArr) {
-                let features = this.map.queryRenderedFeatures(pixArr, { layers: ['pointFeatures', 'polygonFeatures'] });
-                this.vtQueryResults.features.splice(0, this.vtQueryResults.features.length);
-
-                for (let feat of features) {
-                    this.vtQueryResults.features.push(feat);
-                }
             },
             setMarkers: function(src, data) {
                 this.map.getSource(src).setData(data);
@@ -517,60 +286,12 @@ window.onload = () => {
 
                 window.location.hash = JSON.stringify(cnf);
             },
-            updateBBOX: function() {
-                if (!this.cnf.onBBOX || !this.cnf.bbox) {
-                    this.bbox = { type: 'FeatureCollection', features: [] };
-                    return;
-                }
-
-                const bbox = this.cnf.bbox.split(',');
-
-                this.bbox = {
-                    type: 'FeatureCollection',
-                    features: [{
-                        type: 'Feature',
-                        properties: {},
-                        geometry: {
-                            type: 'Polygon',
-                            coordinates: [
-                                [
-                                    [-180.0, -90.0],
-                                    [180.0, -90.0],
-                                    [180.0, 90.0],
-                                    [-180.0, 90.0],
-                                    [-180.0, -90.0]
-                                ],
-                                turf.bboxPolygon(bbox).geometry.coordinates[0]
-                            ]
-                        }
-                    }]
-                }
-            },
-            invert: function() {
-                console.error(this.query);
-                this.query = this.query.split(',').reverse().join(',');
-                this.geocoderResults.features = [];
-            },
             search: function() {
                 let searchTime = new Date();
                 this.updateHash();
-                this.updateBBOX();
+                // this.updateBBOX();
 
                 if (this.query.length === 0) return;
-
-                // if (this.reverseMarker) this.reverseMarker.remove();
-
-                // //Check if it is a reverse query and drop a point on the map if it is
-                // if (this.map && this.query.split(',').length === 2 && !isNaN(Number(this.query.split(',')[0])) && !isNaN(Number(this.query.split(',')[1]))) {
-                //     this.reverse = true;
-                //     const el = document.createElement('div');
-                //     el.className = 'marker';
-                //     el.style.backgroundImage = 'url(' + require('./img/dot.png') +')';
-                //     this.reverseMarker = new mapboxgl.Marker(el).setLngLat([Number(this.query.split(',')[0]), Number(this.query.split(',')[1])]);
-                //     this.reverseMarker.addTo(this.map);
-                // } else {
-                //     this.reverse = false;
-                // }
 
                 let env = this.cnf.staging ? 'staging' : 'production';
                 const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
@@ -586,15 +307,9 @@ window.onload = () => {
                 // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
                 // url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
 
-                // if (this.cnf.onCountry && this.cnf.countries.length) url = `${url}&country=${encodeURIComponent(this.cnf.countries.map((country) => { return country.code }).join(','))}`;
-                // if (this.cnf.onType && this.cnf.types.length) url = `${url}&types=${encodeURIComponent(this.cnf.types)}`;
                 // if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
-                // if (this.cnf.onBBOX && this.cnf.bbox) url = `${url}&bbox=${encodeURIComponent(this.cnf.bbox)}`;
                 // if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
                 // if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
-                // if (this.cnf.languageStrict) url = `${url}&languageMode=strict`;
-                // if (this.cnf.routing) url = `${url}&routing=true`;
-                // if (!this.cnf.approx) url = `${url}&services=hiero`;
 
                 this.url = url;
 
@@ -687,35 +402,13 @@ window.onload = () => {
                 }
                 this.getlocation = true;
             },
-            bboxDraw: function(e) {
-                if (this.getlocation) this.getlocation = false;
-                if (this.buildingBBox) return;
-                this.buildingBBox = true;
-                this.map.addControl(this.draw);
-                this.map.on('draw.create', (e) => {
-                    this.cnf.bbox = turf.bbox(e.features[0]).join(',');
-                    this.buildingBBox = false;
-                    this.map.removeControl(this.draw);
-                });
-            },
+
             resultEnter: function(e) {
-                if (!this.cnf.onDebug) {
-                    let res = parseInt(e.target.getAttribute('result'));
-
-                    //Saved results are special as they are just text - don't perform any action on hover
-                    // if (this.geocoderResults.features[res].id === 'saved') return;
-                    // this.setMarkers('hovered', this.toFeatureCollection(this.geocoderResults.features[res]));
-
-                    // if (this.geocoderResults.features[res].bbox) {
-                    //     this.setMarkers('hovered-bbox', turf.featureCollection([turf.bboxPolygon(this.geocoderResults.features[res].bbox)]));
-                    // }
-                }
+                let res = parseInt(e.target.getAttribute('result'));
             },
             resultLeave: function(e) {
-                if (!this.cnf.onDebug) {
-                    this.clearMarkers('hovered-bbox');
-                    this.clearMarkers('hovered');
-                }
+                this.clearMarkers('hovered-bbox');
+                this.clearMarkers('hovered');
             },
             resultClick: function(e) {
                 if(this.cnf.type === 'address') {
