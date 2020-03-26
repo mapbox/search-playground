@@ -338,8 +338,8 @@
                                 <div class="resIcon maki" :result="res_it" :class="[ res.properties.maki ]"></div>
                             </template> -->
 
-                            <div class="resultText" :result="res_it" v-text="res.place_name ? res.place_name : res.matching_name"></div>
-                            <div class="resultSubText" :result="res_it" v-text="res.place_name ? res.place_name : res.description"></div>
+                            <div class="resultText" :result="res_it" v-text="cnf.type === 'address' ? res.matching_name : res.properties.place_name"></div>
+                            <div class="resultSubText" :result="res_it" v-text="cnf.type === 'address' ? res.description : null"></div>
                         </div>
                     </div>
                 </div>

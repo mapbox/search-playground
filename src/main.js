@@ -17,6 +17,7 @@ window.onload = () => {
                     key_hiero_federation: 'pk.eyJ1IjoiYXBleHNlYXJjaHVzZXIiLCJhIjoiY2pxc2V6bjVyMHVxcjQ4cXE4cmg1a242diJ9.TMZ9oWhH_fF4ccYkaMeyAw',
                     suggestUrl: 'http://search-federation-production.tilestream.net/api/v1/suggest',
                     retrieveUrl: 'http://search-federation-production.tilestream.net/api/v1/retrieve',
+                    poiUrl: 'https://api-poi-search-production.mapbox.com',
                     key_federation: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g'
                 },
                 staging: {
@@ -129,7 +130,7 @@ window.onload = () => {
                 onLimit: true,
                 onLanguage: true,
                 countries: [],
-                proximity: '',
+                proximity: '4.433592,50.878676',
                 // typeToggle: {
                 //     // 'country': false,
                 //     // 'region': false,
@@ -194,8 +195,8 @@ window.onload = () => {
                 this.map = new mapboxgl.Map({
                     container: 'map',
                     style: 'mapbox://styles/mapbox/streets-v11',
-                    center: [-96, 37.8],
-                    zoom: 3
+                    center: [4.433592,50.878676],
+                    zoom: 5
                 });
                 const bboxDrawModes = MapboxDraw.modes;
                 bboxDrawModes.draw_rectangle = DrawRectangle;
@@ -574,9 +575,14 @@ window.onload = () => {
                 let env = this.cnf.staging ? 'staging' : 'production';
                 const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
                 const  accessToken = this.credentials[env][tokenKey];
+                let url = '';
 
-                let url = `${this.credentials[env].suggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
-                url = `${url}&limit=5`;
+                if(this.cnf.type === 'address') {
+                    url = `${this.credentials[env].suggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                    url = `${url}&limit=5`;
+                } else if(this.cnf.type === 'poi') {
+                    url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                }
                 // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
                 // url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
 
