@@ -87,7 +87,7 @@
                             </div>
 
                             <div class="col col--12 px48 relative">
-                                <div @click="proximityManualClick" class='cursor-pointer absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><span v-tooltip="'manually select Proximity from map'"><svg class='icon'><use href='#icon-crosshair'></use></svg></span></div>
+                                <div @click="proximityManualClick" class='cursor-pointer absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><span v-tooltip="'zoom to proximity location on map'"><svg class='icon'><use href='#icon-crosshair'></use></svg></span></div>
                                 <input id="proximityInput" v-model="cnf.proximity" class="input px36" id='bboxInput' type='text' placeholder='Longitude,Latitude'/>
                                 <div @click="proximityClick" class='cursor-pointer absolute top right flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><span v-tooltip="'picks current location as Proximity'"><svg class='icon'><use href='#icon-compass'></use></svg></span></div>
                             </div>

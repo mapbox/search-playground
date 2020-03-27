@@ -367,7 +367,12 @@ window.onload = () => {
                 });
             },
             proximityManualClick: function(e) {
-                this.getlocation = true;
+                let center = this.cnf.proximity.split(',').map(Number);
+                console.log(center);
+                this.map.jumpTo({
+                    center: center,
+                    zoom: 15
+                });
             },
             catClick: function(e) {
                 this.query = e.target.getAttribute('type');
@@ -419,7 +424,7 @@ window.onload = () => {
                                 zoom: max
                             });
 
-                            // this.searchClear();
+                            this.query = this.geocoderResults.features[0].properties.place_name;
                         }
                     }
                     xhr.send();
