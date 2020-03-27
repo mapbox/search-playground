@@ -162,6 +162,12 @@ window.onload = () => {
                     this.map.addLayer({ 'id': 'bbox', 'source': 'bbox', 'type': 'fill', 'paint': { 'fill-color': '#273d56', 'fill-opacity': 0.5 } });
                 });
 
+                this.proximityMarker = new mapboxgl.Marker({
+                    draggable: true
+                }).setLngLat(this.cnf.proximity.split(',').map(Number)).addTo(this.map);
+
+                this.proximityMarker.on('dragend', this.proximityDrag);
+
                 this.search();
 
                 this.map.on('load', () => {
@@ -367,12 +373,14 @@ window.onload = () => {
                 });
             },
             proximityManualClick: function(e) {
-                let center = this.cnf.proximity.split(',').map(Number);
-                console.log(center);
                 this.map.jumpTo({
-                    center: center,
-                    zoom: 15
+                    center: this.cnf.proximity.split(',').map(Number),
+                    zoom: 13
                 });
+            },
+            proximityDrag: function(e) {
+                let lngLat = this.proximityMarker.getLngLat();
+                this.cnf.proximity = `${lngLat.lng.toFixed(6)},${lngLat.lat.toFixed(6)}`;
             },
             catClick: function(e) {
                 this.query = e.target.getAttribute('type');
