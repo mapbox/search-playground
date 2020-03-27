@@ -99,22 +99,15 @@ window.onload = () => {
             layers: [],
             defaultCnf: '', //Stores a stringified version of below for resetting to default state
             cnf: {
-                url: '',
                 onType: true,
                 onProximity: true,
-                onBBOX: true,
                 onLimit: true,
                 onLanguage: true,
                 proximity: '4.433592,50.878676',
                 type: 'address',
-                bbox: '',
                 limit: '5',
                 languages: [],
-                onDebug: false,
-                selectedLayer: '',
-                debugClick: {},
             },
-            buildingBBox: false,
             hostname: location.hostname,
             getlocation: false,
             jsonPanel: false,
@@ -123,28 +116,20 @@ window.onload = () => {
         },
         // Called synchronously after the Vue instance is created https://vuejs.org/v2/api/#created
         created: function() {
-            this.defaultCnf = JSON.stringify(this.cnf);
-
+            this.defaultCnf = Object.keys(this.cnf).map(key => key + '=' + this.cnf[key]).join('&');
             let saved = localStorage.getItem('saved');
             if (saved) this.saved = JSON.parse(saved);
-
-            // Set state to hashed value
-            if (window.location.hash) {
-                this.fitZoom = true;
-                let cnf = JSON.parse(decodeURIComponent(window.location.hash.substring(1, window.location.hash.length)));
-                // Populate the query form separately from other cnf properties
-                // query is part of the Vue's data property, not the cnf
-                this.query = cnf.query;
-                delete cnf.query;
-
-                for (let c in cnf) {
-                    this.cnf[c] = cnf[c];
-                }
+            // Set state to search value
+            if (window.location.search) {
+                let urlParams = new URLSearchParams(window.location.search)
+                urlParams.forEach((v, k) => {
+                  v = v !== '' ? v : undefined;
+                  this.cnf[k] = v;
+                })
             }
         },
         // Called after the instance has been mounted-- now ready to add map
         mounted: function() {
-
             this.$nextTick(function() {
                 mapboxgl.accessToken = this.credentials.map.key;
                 this.map = new mapboxgl.Map({
@@ -190,11 +175,6 @@ window.onload = () => {
                     });
                     this.map.addControl(scale);
 
-                    this.$watch('cnf.selectedLayer', function() {
-                        this.updateHash();
-                        // this.toggleTiles();
-                    }, { immediate: true });
-
                     this.$watch('geocoderResults.features', function() {
                         this.setMarkers('markers', this.geocoderResults);
                     }, { immediate: true });
@@ -218,11 +198,10 @@ window.onload = () => {
             'cnf.onCountry': function() { return this.search(); },
             'cnf.countries': function() { return this.search(); },
             'cnf.onType': function() { return this.search(); },
+            'cnf.type': function() { return this.search(); },
             'cnf.types': function() { return this.search(); },
             'cnf.onProximity': function() { return this.search(); },
             'cnf.proximity': function() { return this.search(); },
-            'cnf.onBBOX': function() { return this.search(); },
-            'cnf.bbox': function() { return this.search(); },
             'cnf.onLimit': function() { return this.search(); },
             'cnf.limit': function() { return this.search(); },
             'cnf.autocomplete': function() { return this.search(); },
@@ -237,15 +216,6 @@ window.onload = () => {
             help: function(url = 'https://docs.mapbox.com/api/search/#forward-geocoding') {
                 window.open(url, '_blank');
             },
-
-            //Reset settings to their defalt values
-            resetCnf: function() {
-                const cnf = JSON.parse(this.defaultCnf);
-                for (let key of Object.keys(cnf)) {
-                    this.cnf[key] = cnf[key];
-                }
-            },
-
             setStyle: function(style) {
                 this.map.setStyle(style);
             },
@@ -279,16 +249,14 @@ window.onload = () => {
                 }
                 xhr.send();
             },
-            updateHash: function() {
-                //Update URL hash
-                let cnf = JSON.parse(JSON.stringify(this.cnf));
-                cnf.query = this.query;
-
-                window.location.hash = JSON.stringify(cnf);
+            updateQueryString: function() {
+                // Update URL search
+                let cnf = Object.keys(this.cnf).map(key => key + '=' + this.cnf[key]).join('&');
+                window.history.replaceState( {} , '/?', `?${cnf}` );
             },
             search: function() {
                 let searchTime = new Date();
-                this.updateHash();
+                this.updateQueryString();
                 // this.updateBBOX();
 
                 if (this.query.length === 0) return;
@@ -397,10 +365,6 @@ window.onload = () => {
                 });
             },
             proximityManualClick: function(e) {
-                if (this.buildingBBox) {
-                    this.buildingBBox = false;
-                    this.map.removeControl(this.draw);
-                }
                 this.getlocation = true;
             },
             catClick: function(e) {
@@ -422,7 +386,7 @@ window.onload = () => {
                     let env = this.cnf.staging ? 'staging' : 'production';
                     const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
                     const  accessToken = this.credentials[env][tokenKey];
-    
+
                     let url = `${this.credentials[env].retrieveUrl}/${queryId}?access_token=${accessToken}`;
                     let xhr = new XMLHttpRequest();
                     xhr.open('GET', url);
@@ -458,31 +422,29 @@ window.onload = () => {
                     }
                     xhr.send();
                 } else {
-                    if (!this.cnf.onDebug) {
-                        let res = parseInt(e.target.getAttribute('result'));
+                    let res = parseInt(e.target.getAttribute('result'));
 
-                        //Set query to saved result
-                        if (this.geocoderResults.features[res].id === 'saved') {
-                            this.query = this.geocoderResults.features[res].place_name;
+                    //Set query to saved result
+                    if (this.geocoderResults.features[res].id === 'saved') {
+                        this.query = this.geocoderResults.features[res].place_name;
+                    } else {
+                        this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[res]));
+
+                        if (this.geocoderResults.features[res].bbox) {
+                            this.map.fitBounds(this.geocoderResults.features[res].bbox, {
+                                animate: false,
+                                padding: 20
+                            });
                         } else {
-                            this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[res]));
-
-                            if (this.geocoderResults.features[res].bbox) {
-                                this.map.fitBounds(this.geocoderResults.features[res].bbox, {
-                                    animate: false,
-                                    padding: 20
-                                });
-                            } else {
-                                this.map.jumpTo({
-                                    center: this.geocoderResults.features[res].geometry.coordinates,
-                                    zoom: 15
-                                });
-                            }
-
-                            //Add to saved queries list (max 5)
-                            this.saved.push(this.geocoderResults.features[res].place_name);
-                            if (this.saved.length > 5) this.saved.shift();
+                            this.map.jumpTo({
+                                center: this.geocoderResults.features[res].geometry.coordinates,
+                                zoom: 15
+                            });
                         }
+
+                        //Add to saved queries list (max 5)
+                        this.saved.push(this.geocoderResults.features[res].place_name);
+                        if (this.saved.length > 5) this.saved.shift();
                     }
                 }
             },
