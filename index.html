@@ -99,15 +99,15 @@
                             <div class="col col--12 px48">
                                <div class="toggle-group mr48 py12">
                                     <label class="toggle-container">
-                                        <input checked name='toggle-1' @click="typeClick" type='radio' value="address" />
+                                        <input :checked="cnf.type == 'address'" name='toggle-1' @click="typeClick" type='radio' value="address" />
                                         <div class="toggle">Address</div>
                                     </label>
                                     <label class="toggle-container">
-                                        <input name='toggle-1' @click="typeClick" type='radio' value="poi-search"/>
+                                        <input :checked="cnf.type == 'poi-search'" name='toggle-1' @click="typeClick" type='radio' value="poi-search"/>
                                         <div class="toggle">POI Search</div>
                                     </label>
                                     <label class="toggle-container">
-                                        <input name='toggle-1' @click="typeClick" type='radio' value="poi-category"/>
+                                        <input :checked="cnf.type == 'poi-category'" name='toggle-1' @click="typeClick" type='radio' value="poi-category"/>
                                         <div class="toggle">POI Category</div>
                                     </label>
                                 </div>
