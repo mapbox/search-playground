@@ -271,13 +271,15 @@ window.onload = () => {
                     url = `${url}&limit=5`;
                 } else if(this.cnf.type === 'poi-search') {
                     url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
-                } else if(this.cnf.type === 'poi-category') {
+                    url = `${url}&limit=10`;
+               } else if(this.cnf.type === 'poi-category') {
                     url = `${this.credentials[env].poiUrl}/category/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                    url = `${url}&limit=20`;
                 }
                 // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
                 // url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
 
-                // if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
+                if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
                 // if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
                 // if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
 
