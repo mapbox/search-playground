@@ -436,19 +436,9 @@ window.onload = () => {
                                 padding: 20
                             });
                         } else {
-                            let type = this.geocoderResults.features[res].id.split('.')[0];
-
-                            let max = 16;
-                            if (type === "street") max = 15;
-                            else if (type === "locality") max = 14;
-                            else if (type === "place" || type === "city") max = 13;
-                            else if (type === "district") max = 9;
-                            else if (type === "region") max = 6;
-                            else if (type === "country") max = 4;
-
                             this.map.jumpTo({
                                 center: this.geocoderResults.features[res].geometry.coordinates,
-                                zoom: max
+                                zoom: 15
                             });
                         }
 
