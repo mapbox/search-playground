@@ -118,7 +118,7 @@ window.onload = () => {
         created: function() {
             this.defaultCnf = Object.keys(this.cnf).map(key => key + '=' + this.cnf[key]).join('&');
             let saved = localStorage.getItem('saved');
-            if (saved) this.saved = saved;
+            if (saved) this.saved = JSON.parse(saved);
             // Set state to search value
             if (window.location.search) {
                 let urlParams = new URLSearchParams(window.location.search)
@@ -190,7 +190,7 @@ window.onload = () => {
         // watch functions are triggered by user interactions which change values in the `data` property
         watch: {
             saved: function() {
-                localStorage.setItem('saved', this.saved);
+                localStorage.setItem('saved', JSON.stringify(this.saved));
             },
             query: function() { return this.search(); },
             'cnf.staging': function() { return this.search(); },
