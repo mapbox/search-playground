@@ -163,6 +163,12 @@ window.onload = () => {
                     this.map.addLayer({ 'id': 'bbox', 'source': 'bbox', 'type': 'fill', 'paint': { 'fill-color': '#273d56', 'fill-opacity': 0.5 } });
                 });
 
+                this.proximityMarker = new mapboxgl.Marker({
+                    draggable: true
+                }).setLngLat(this.cnf.proximity.split(',').map(Number)).addTo(this.map);
+
+                this.proximityMarker.on('dragend', this.proximityDrag);
+
                 this.search();
 
                 this.map.on('load', () => {
@@ -276,13 +282,15 @@ window.onload = () => {
                     url = `${url}&limit=5`;
                 } else if(this.cnf.type === 'poi-search') {
                     url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
-                } else if(this.cnf.type === 'poi-category') {
+                    url = `${url}&limit=10`;
+               } else if(this.cnf.type === 'poi-category') {
                     url = `${this.credentials[env].poiUrl}/category/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                    url = `${url}&limit=20`;
                 }
                 // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
                 // url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
 
-                // if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
+                if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
                 // if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
                 // if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
 
@@ -370,7 +378,14 @@ window.onload = () => {
                 });
             },
             proximityManualClick: function(e) {
-                this.getlocation = true;
+                this.map.jumpTo({
+                    center: this.cnf.proximity.split(',').map(Number),
+                    zoom: 13
+                });
+            },
+            proximityDrag: function(e) {
+                let lngLat = this.proximityMarker.getLngLat();
+                this.cnf.proximity = `${lngLat.lng.toFixed(6)},${lngLat.lat.toFixed(6)}`;
             },
             catClick: function(e) {
                 this.query = e.target.getAttribute('type');
@@ -422,7 +437,7 @@ window.onload = () => {
                                 zoom: max
                             });
 
-                            // this.searchClear();
+                            this.query = this.geocoderResults.features[0].properties.place_name;
                         }
                     }
                     xhr.send();
