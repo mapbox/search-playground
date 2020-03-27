@@ -122,8 +122,9 @@ window.onload = () => {
             // Set state to search value
             if (window.location.search) {
                 let urlParams = new URLSearchParams(window.location.search)
+                if (urlParams.get('query')) this.query = urlParams.get('query');
                 urlParams.forEach((v, k) => {
-                  v = v !== '' ? v : undefined;
+                  v = v ? v : undefined;
                   this.cnf[k] = v;
                 })
             }
@@ -252,6 +253,10 @@ window.onload = () => {
             updateQueryString: function() {
                 // Update URL search
                 let cnf = Object.keys(this.cnf).map(key => key + '=' + this.cnf[key]).join('&');
+                // Add query to string
+                if (this.query) {
+                  cnf = `${cnf}&query=${this.query}`
+                };
                 window.history.replaceState( {} , '/?', `?${cnf}` );
             },
             search: function() {
