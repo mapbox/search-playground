@@ -232,10 +232,10 @@ window.onload = () => {
             clearMarkers: function(src) {
                 this.map.getSource(src).setData({ "type": "FeatureCollection", "features": [] });
             },
-            panelManage: function(panel) {
-                if (panel == 'settings') {
-                    this.settingsPanel = !this.settingsPanel;
+            panelManage: function() {
+                if (this.jsonPanel) {
                     this.jsonPanel = false;
+                    this.settingsPanel = !this.settingsPanel;
                 } else {
                     this.jsonPanel = !this.jsonPanel;
                     this.settingsPanel = false;
@@ -388,7 +388,8 @@ window.onload = () => {
                 this.cnf.proximity = `${lngLat.lng.toFixed(6)},${lngLat.lat.toFixed(6)}`;
             },
             catClick: function(e) {
-                this.query = e.target.getAttribute('type');
+                console.log(e)
+                this.query = e.target.target.getAttribute('type');
             },
 
             resultEnter: function(e) {

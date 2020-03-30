@@ -33,33 +33,35 @@
     <body>
         <div id='app' class='relative'>
             <div class='grid grid--gut12 py12 px12 bg-default'>
-                <div class='col col--8 col--4-mm relative'>
                     <template v-if='cnf.type === "poi-category"'>
-                        <div class="col col--12 px48">
-                            <button @click="catClick" type='restaurant' :class="{ 'btn--stroke': query === 'restaurant' }" class='btn my3'>food</button>
-                            <button @click="catClick" type='coffee' :class="{ 'btn--stroke': query === 'coffee' }" class='btn my3'>coffee</button>
-                            <button @click="catClick" type='bar' :class="{ 'btn--stroke': query === 'bar' }" class='btn my3'>bar</button>
-                            <button @click="catClick" type='gas_station' :class="{ 'btn--stroke': query === 'gas_station' }" class='btn my3'>gas</button>
-                            <button @click="catClick" type='hotel' :class="{ 'btn--stroke': query === 'hotel' }" class='btn my3'>hotel</button>
+                        <div class="flex-buttons">
+                            <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'restaurant' }" class='padding-button btn btn--default maki restaurant'><span class="btn-label" type='restaurant'>Food</span></button>
+                            <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'coffee' }" class='padding-button btn btn--default maki cafe'><span class="btn-label" type='coffee'>Coffee</span></button>
+                            <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'bar' }" class='padding-button btn btn--default maki bar'><span class="btn-label" type='bar'>Bar</span></button>
+                            <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'gas_station' }" class='padding-button btn btn--default maki fuel'><span class="btn-label" type='gas_station'>Gas</span></button>
+                            <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'hotel' }" class='padding-button btn btn--default maki lodging'><span class="btn-label" type='hotel'>Hotel</span></button>
                         </div>
                     </template>
                     <template v-else>
+                      <div class='col col--8 col--4-mm relative'>
                         <div class='absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'><use href='#icon-search'></use></svg></div>
                         <input v-model='query' @focus='searchFocus' class='input bg-white px36' placeholder='Search'>
                         <div @click='searchClear' class='cursor-pointer absolute top right flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'><use href='#icon-close'></use></svg></div>
+                      </div>
                     </template>
-                </div>
 
-                <div class='col col--4 col--8-mm'>
+                <div class='col'>
                     <!-- <button @click="invert" v-tooltip="'Flip Coordinates'" v-if='reverse' class='fl btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-rotate'></use></svg></button> -->
-                    <button @click="panelManage('settings')" v-tooltip="'Toggle Settings Panel'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-sprocket'/></svg></button>
-                    <button @click="bugReport" v-tooltip="'Found a bug?'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-bug'></use></svg></button>
+                    <!-- <button @click="panelManage('settings')" v-tooltip="'Toggle Settings Panel'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-sprocket'/></svg></button> -->
+                    <!-- <button @click="bugReport" v-tooltip="'Found a bug?'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-bug'></use></svg></button> -->
                     <button @click="shareClick" v-tooltip="'Open API URL'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-share'/></svg></button>
                     <button @click="panelManage('json')" v-tooltip="'Toggle JSON Panel'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-code'/></svg></button>
                 </div>
             </div>
+          <div class="flex-map">
+            <div id='map'></div>
             <!-- Settings -->
-            <div v-if='settingsPanel' class='left-pane w-full w600-mm bg-white'>
+            <div v-if='settingsPanel' class='left-pane bg-white'>
                 <div class='grid px24 py24'>
                     <div class='col col--12'>
                         <h2 class='txt-h3 fl'>Settings</h2>
@@ -114,6 +116,17 @@
                             </div>
                         </div>
 
+                        <!-- Basemap switcher -->
+                        <div class='col col--12 py12'>
+                            <h3 class='txt-h4'>Change Basemap</h3>
+                            <div class="flex">
+                              <div id='style-sat' class='style' @click="setStyle('mapbox://styles/mapbox/satellite-v9')"></div>
+                              <div id='style-str' class='style' @click="setStyle('mapbox://styles/mapbox/streets-v11')"></div>
+                              <div id='style-drk' class='style' @click="setStyle('mapbox://styles/mapbox/dark-v9')"></div>
+                              <div id='style-lgt' class='style' @click="setStyle('mapbox://styles/mapbox/light-v9')"></div>
+                            </div>
+                        </div>
+
                         <!--Limit-->
                         <!-- <div class='col col--12'>
                             <div class="col col--12 py12">
@@ -150,13 +163,11 @@
             </div>
 
             <!-- JSON Response -->
-            <div v-if="jsonPanel" class='left-pane w-full w600-mm bg-white px24 py24'>
+            <div v-if="jsonPanel" class='left-pane left-pane-json bg-white px24 py24'>
                 <button v-clipboard:copy="cnf.onDebug ? JSON.stringify(vtQueryResults, null, 4) : JSON.stringify(geocoderResults, null, 4)" class='fr btn h36 round bg-default transition bg-default-dark-on-hover'><svg class='icon'><use href='#icon-clipboard'/></svg></button>
                 <pre><json-tree :raw="cnf.onDebug ? JSON.stringify(vtQueryResults, null, 4) : JSON.stringify(geocoderResults, null, 4)"></json-tree></pre>
             </div>
-
-            <div id='map'></div>
-
+          </div>
             <!-- Search Results -->
             <div class='resultContainer clearfix'>
                 <div class='results col5'>
@@ -215,10 +226,6 @@
                         <h4 class='txt-h4 fl'>Click on the map to set proximity</h4>
                     </div>
                 </div>
-
-            <div id='style-sat' class='style' @click="setStyle('mapbox://styles/mapbox/satellite-v9')"></div>
-            <div id='style-def' class='style' @click="setStyle('mapbox://styles/mapbox/streets-v8')"></div>
-            <div id='style-drk' class='style' @click="setStyle('mapbox://styles/mapbox/dark-v9')"></div>
         </div>
     </body>
 </html>
