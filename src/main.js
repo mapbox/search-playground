@@ -13,25 +13,30 @@ window.onload = () => {
             credentials: {
                 production: {
                     url: 'https://api.mapbox.com/geocoding/v5',
-                    key: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g',
+                    key: 'pk.eyJ1Ijoic2VhcmNoLW1hY2hpbmUtdXNlci0xIiwiYSI6ImNrN2Y1Nmp4YjB3aG4zZ253YnJoY21kbzkifQ.JM5ZeqwEEm-Tonrk5wOOMw',
                     key_hiero_federation: 'pk.eyJ1IjoiYXBleHNlYXJjaHVzZXIiLCJhIjoiY2pxc2V6bjVyMHVxcjQ4cXE4cmg1a242diJ9.TMZ9oWhH_fF4ccYkaMeyAw'
                 },
                 staging: {
-                    url: 'https://api-geocoder-staging.tilestream.net/geocoding/v5',
-                    key: false
+                    url: process.env.DEPLOY_ENV === 'local' ? 'http://localhost:8000/geocoding/v5': 'https://api-geocoder-staging.tilestream.net/geocoding/v5',
+                    key: process.env.DEPLOY_ENV === 'local' ? 'pk.eyJ1IjoiYXBpa2V5dXNlciIsImEiOiJhYmNkZWZnIn0.ENonA568sn1Xp32NR6CvxA': false,
+                    authed: process.env.DEPLOY_ENV === 'local' ? true : false
                 },
                 map: {
-                    key: 'pk.eyJ1Ijoic2JtYTQ0IiwiYSI6ImNpcXNycTNqaTAwMDdmcG5seDBoYjVkZGcifQ.ZVIe6sjh0QGeMsHpBvlsEA'
+                    key: 'pk.eyJ1Ijoic2VhcmNoLW1hY2hpbmUtdXNlci0xIiwiYSI6ImNrN2Y1Nmp4YjB3aG4zZ253YnJoY21kbzkifQ.JM5ZeqwEEm-Tonrk5wOOMw'
                 },
                 debug: {
                     url: 'https://api.mapbox.com/geocoding/v5/tiles',
                     key: '',
-                    authed: false
+                    authed: process.env.DEPLOY_ENV === 'local' ? true : false
                 },
                 heyProxy: {
                     url: 'https://hey.mapbox.com/search-playground/geocoding-debug'
                 },
             },
+
+            // If the page is just loaded and has a query in the hash value,
+            // zoom the map to the bbox extent of the results
+            fitZoom: false,
             bbox: { type: 'FeatureCollection', features: [] },
             reverse: false,
             query: '',
@@ -111,6 +116,7 @@ window.onload = () => {
             cnf: {
                 url: '',
                 index: 'mapbox.places',
+                approx: true,
                 staging: false,
                 onCountry: true,
                 onType: true,
@@ -158,6 +164,7 @@ window.onload = () => {
 
             // Set state to hashed value
             if (window.location.hash) {
+                this.fitZoom = true;
                 let cnf = JSON.parse(decodeURIComponent(window.location.hash.substring(1, window.location.hash.length)));
                 // Populate the query form separately from other cnf properties
                 // query is part of the Vue's data property, not the cnf
@@ -288,6 +295,7 @@ window.onload = () => {
             },
             query: function() { return this.search(); },
             'cnf.staging': function() { return this.search(); },
+            'cnf.approx': function() { return this.search(); },
             'cnf.onCountry': function() { return this.search(); },
             'cnf.countries': function() { return this.search(); },
             'cnf.onType': function() { return this.search(); },
@@ -307,7 +315,7 @@ window.onload = () => {
         },
         // methods functions perform CRUD operations on the `data` property
         methods: {
-            help: function(url = 'https://www.mapbox.com/api-documentation/#search-for-places') {
+            help: function(url = 'https://docs.mapbox.com/api/search/#forward-geocoding') {
                 window.open(url, '_blank');
             },
             //Parse Settings from a Mapbox API URL
@@ -374,16 +382,21 @@ window.onload = () => {
             },
             // retrieve temporary token from hey-proxy
             retrieveToken: function() {
-                let xhr = new XMLHttpRequest();
-                xhr.open('GET', this.credentials.heyProxy.url);
-                xhr.onload = () => {
-                    if (Math.floor(xhr.status / 100) * 100 !== 200) return console.error(xhr.status, xhr.responseText);
-                    this.credentials.debug.key = JSON.parse(xhr.responseText).token;
+                if (window.location.hostname === 'localhost') {
+                    // Show debug options on localhost
                     this.credentials.debug.authed = true;
-                    // load tile layers
-                    this.listTiles();
+                } else if (window.location.host !== 'docs.mapbox.com') {
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('GET', this.credentials.heyProxy.url);
+                    xhr.onload = () => {
+                        if (Math.floor(xhr.status / 100) * 100 !== 200) return console.error(xhr.status, xhr.responseText);
+                        this.credentials.debug.key = JSON.parse(xhr.responseText).token;
+                        this.credentials.debug.authed = true;
+                        // load tile layers
+                        this.listTiles();
+                    }
+                    xhr.send();
                 }
-                xhr.send();
             },
             retrieveStaging: function() {
                 let xhr = new XMLHttpRequest();
@@ -568,7 +581,7 @@ window.onload = () => {
                 if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
                 if (this.cnf.languageStrict) url = `${url}&languageMode=strict`;
                 if (this.cnf.routing) url = `${url}&routing=true`;
-    
+                if (!this.cnf.approx) url = `${url}&services=hiero`;
 
                 this.url = url;
 
@@ -586,6 +599,14 @@ window.onload = () => {
                         } else {
                             for (let feat of JSON.parse(xhr.responseText).features) {
                                 this.geocoderResults.features.push(feat);
+                            }
+
+                            if (this.fitZoom) {
+                                this.map.fitBounds(turf.bbox(this.geocoderResults), {
+                                    animate: false,
+                                    padding: 250
+                                });
+                                this.fitZoom = false;
                             }
                         }
                     }
@@ -713,7 +734,7 @@ window.onload = () => {
                 }
             },
             hecate: function(e) {
-                const win = window.open(`https://hecate-internal-prod-us.private.tilestream.net/admin/index.html#${this.map.getZoom()}/${this.map.getCenter().lat}/${this.map.getCenter().lng}`, '_blank').focus();
+                const win = window.open(`https://hecate-internal-prod-us.tilestream.net/admin/index.html#${this.map.getZoom()}/${this.map.getCenter().lat}/${this.map.getCenter().lng}`, '_blank').focus();
             },
             josm: function(e) {
                 let ne = this.map.getBounds().getNorthEast().wrap().toArray();
