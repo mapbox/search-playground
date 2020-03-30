@@ -202,19 +202,19 @@
                         </div> -->
 
             <!--Language Filter-->
-            <!-- <div class='col col--12'>
-                            <div class="col col--12 py12">
-                                <label class='switch-container fl pr12'>
-                                    <input v-model="cnf.onLanguage" type='checkbox' checked/>
-                                    <div class='switch'></div>
-                                </label>
-                                <h3 class='txt-h4'>Language Filter <svg @click="help()" class='fr ml12 icon cursor-pointer color-gray-light color-gray-dark-on-hover'><use href='#icon-info'/></svg></h3>
-                            </div>
+            <div class='col col--12'>
+                <div class="col col--12 py12">
+                    <!-- <label class='switch-container fl pr12'>
+                        <input v-model="cnf.onLanguage" type='checkbox' checked/>
+                        <div class='switch'></div>
+                    </label> -->
+                    <h3 class='txt-h4'>Language Filter </h3>
+                </div>
 
-                            <div class="col col--12 px48">
-                                <multiselect v-model="cnf.languages" :options="languages" placeholder="Filter" :taggable="true" :multiple="true"  track-by="code" label="name"></multiselect>
-                            </div>
-                        </div> -->
+                <div class="col col--12 px48">
+                    <multiselect v-model="cnf.language" :options="languages" placeholder="Filter" :taggable="true" :multiple="false"  track-by="code" label="name" ></multiselect>
+                </div>
+            </div>
 
 
           </div>

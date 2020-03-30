@@ -106,7 +106,7 @@ window.onload = () => {
                 proximity: '4.433592,50.878676',
                 type: 'address',
                 limit: '5',
-                languages: [],
+                language: {},
             },
             hostname: location.hostname,
             getlocation: false,
@@ -213,7 +213,7 @@ window.onload = () => {
             'cnf.limit': function() { return this.search(); },
             'cnf.autocomplete': function() { return this.search(); },
             'cnf.onLanguage': function() { return this.search(); },
-            'cnf.languages': function() { return this.search(); },
+            'cnf.language': function() { return this.search(); },
             'cnf.languageStrict': function() { return this.search(); },
             'cnf.routing': function() { return this.search(); },
             'cnf.localsearch': function() { return this.search(); }
@@ -278,13 +278,13 @@ window.onload = () => {
                 let url = '';
 
                 if(this.cnf.type === 'address') {
-                    url = `${this.credentials[env].suggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                    url = `${this.credentials[env].suggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=5`;
                 } else if(this.cnf.type === 'poi-search') {
-                    url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                    url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=10`;
                } else if(this.cnf.type === 'poi-category') {
-                    url = `${this.credentials[env].poiUrl}/category/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                    url = `${this.credentials[env].poiUrl}/category/search/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=20`;
                 }
                 // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
@@ -292,7 +292,7 @@ window.onload = () => {
 
                 if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
                 // if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
-                // if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
+                if (this.cnf.onLanguage && this.cnf.language) url = `${url}&language=${encodeURIComponent(this.cnf.language.code)}`;
 
                 this.url = url;
 

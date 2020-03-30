@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html -d _site --no-minify --public-url='/search-playground/'",
+    "build": "parcel build index.html -d _site --no-minify --public-url='./'",
     "local": "export DEPLOY_ENV='local' && parcel index.html serve -d _site --public-url='/search-playground/'"
   },
   "dependencies": {
