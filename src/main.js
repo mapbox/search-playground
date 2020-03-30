@@ -13,7 +13,7 @@ window.onload = () => {
             credentials: {
                 production: {
                     suggestUrl: 'https://search-federation-production.mapbox.com/api/v1/suggest',
-                    retrieveUrl: 'http://search-federation-production.mapbox.com/api/v1/retrieve',
+                    retrieveUrl: 'https://search-federation-production.mapbox.com/api/v1/retrieve',
                     poiUrl: 'https://api-poi-search-production.mapbox.com',
                     key_federation: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g'
                 },
