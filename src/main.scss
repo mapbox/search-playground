@@ -1,337 +1,270 @@
 /* Global Styling */
-html, body, #app {
-    height: 100%;
+#app,
+body,
+html {
+  height: 100%;
 }
 
 .bg-default {
-    background-color: #4264fb !important;
+  background-color: #4264fb !important;
 }
 
 .bg-default-dark-on-hover:hover {
-    background-color: #ffffff !important;
+  background-color: #ffffff !important;
 }
-
 /* tooltip */
 .tooltip {
-    display: block !important;
-    z-index: 10000;
-  }
-  
-  .tooltip .tooltip-inner {
-    background: #000000b1;
-    color: white;
-    border-radius: 20px;
-    padding: 5px 10px 4px;
-  }
-  
-  .tooltip .tooltip-arrow {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    position: absolute;
-    margin: 5px;
-    border-color: #000000b1;
-  }
-  
-  .tooltip[x-placement^="top"] {
-    margin-bottom: 5px;
-  }
-  
-  .tooltip[x-placement^="top"] .tooltip-arrow {
-    border-width: 5px 5px 0 5px;
-    border-left-color: transparent !important;
-    border-right-color: transparent !important;
-    border-bottom-color: transparent !important;
-    bottom: -5px;
-    left: calc(50% - 5px);
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-  
-  .tooltip[x-placement^="bottom"] {
-    margin-top: 5px;
-  }
-  
-  .tooltip[x-placement^="bottom"] .tooltip-arrow {
-    border-width: 0 5px 5px 5px;
-    border-left-color: transparent !important;
-    border-right-color: transparent !important;
-    border-top-color: transparent !important;
-    top: -5px;
-    left: calc(50% - 5px);
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-  
-  .tooltip[x-placement^="right"] {
-    margin-left: 5px;
-  }
-  
-  .tooltip[x-placement^="right"] .tooltip-arrow {
-    border-width: 5px 5px 5px 0;
-    border-left-color: transparent !important;
-    border-top-color: transparent !important;
-    border-bottom-color: transparent !important;
-    left: -5px;
-    top: calc(50% - 5px);
-    margin-left: 0;
-    margin-right: 0;
-  }
-  
-  .tooltip[x-placement^="left"] {
-    margin-right: 5px;
-  }
-  
-  .tooltip[x-placement^="left"] .tooltip-arrow {
-    border-width: 5px 0 5px 5px;
-    border-top-color: transparent !important;
-    border-right-color: transparent !important;
-    border-bottom-color: transparent !important;
-    right: -5px;
-    top: calc(50% - 5px);
-    margin-left: 0;
-    margin-right: 0;
-  }
-  
-  .tooltip[aria-hidden='true'] {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity .15s, visibility .15s;
-  }
-  
-  .tooltip[aria-hidden='false'] {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity .15s;
-  }
+  display: block !important;
+  z-index: 10000;
+}
 
+.tooltip .tooltip-inner {
+  background: #000000b1;
+  color: white;
+  border-radius: 20px;
+  padding: 5px 10px 4px;
+}
+
+.tooltip .tooltip-arrow {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  position: absolute;
+  margin: 5px;
+  border-color: #000000b1;
+}
+
+.tooltip[x-placement^="top"] {
+  margin-bottom: 5px;
+}
+
+.tooltip[x-placement^="top"] .tooltip-arrow {
+  border-width: 5px 5px 0 5px;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  bottom: -5px;
+  left: calc(50% - 5px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.tooltip[x-placement^="bottom"] {
+  margin-top: 5px;
+}
+
+.tooltip[x-placement^="bottom"] .tooltip-arrow {
+  border-width: 0 5px 5px 5px;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+  border-top-color: transparent !important;
+  top: -5px;
+  left: calc(50% - 5px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.tooltip[x-placement^="right"] {
+  margin-left: 5px;
+}
+
+.tooltip[x-placement^="right"] .tooltip-arrow {
+  border-width: 5px 5px 5px 0;
+  border-left-color: transparent !important;
+  border-top-color: transparent !important;
+  border-bottom-color: transparent !important;
+  left: -5px;
+  top: calc(50% - 5px);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.tooltip[x-placement^="left"] {
+  margin-right: 5px;
+}
+
+.tooltip[x-placement^="left"] .tooltip-arrow {
+  border-width: 5px 0 5px 5px;
+  border-top-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  right: -5px;
+  top: calc(50% - 5px);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.tooltip[aria-hidden='true'] {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.15s, visibility 0.15s;
+}
+
+.tooltip[aria-hidden='false'] {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.15s;
+}
 /* Main Map Styling */
 #map {
-    position: absolute;
-    left: 0;
-    top: 60px;
-    bottom: 0;
-    width: 100%;
+  width: 100%;
+}
+.flex-map {
+  display: flex;
+  height: 100%;
+  width: 100%;
 }
 
-.left-pane {
-    position: absolute;
-    right: 0;
-    top: 60px;
-    height: calc(100% - 60px);
-    overflow: scroll;
-    z-index: 1;
+.flex-buttons {
+  flex-basis: auto;
 }
 
+.btn-label {
+  padding-left: 20px;
+}
+
+.left-pane-json {
+  width: 600px;
+}
 /* Lower Left Map Style Changer */
-.style {
-    background-color: black;
-    position: absolute;
-    cursor: pointer;
-    bottom: 25px;
-    width: 40px;
-    height: 40px;
-}
-.style#style-sat {
-    right: 5px;
-    background-image: url('./img/sat.png');
-}
-.style#style-def {
-    right: 50px;
-    background-image: url('./img/def.png');
-}
-.style#style-drk {
-    right: 95px;
-    background-image: url('./img/drk.png');
-}
-.style#style-oa {
-    right: 140px;
-    background-image: url('./img/sat.png');
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
+.style {
+  flex-direction: row;
+  background-color: black;
+  cursor: pointer;
+  width: 80px;
+  height: 80px;
+}
+
+.style#style-sat {
+  background-image: url("./img/satellite.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.style#style-str {
+  background-image: url("./img/street.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.style#style-drk {
+  background-image: url("./img/dark.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.style#style-lgt {
+  background-image: url("./img/light.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
 /* Results Dropdown */
 .resultContainer {
-    position: absolute;
-    width: 500px;
-    left: 0;
-    top: 60px;
-    max-height: 50vh;
-    overflow: auto;
+  position: absolute;
+  width: 500px;
+  left: 0;
+  top: 60px;
+  max-height: 50vh;
+  overflow: auto;
 
-    .results {
-        width: 100%;
-    }
+  .results {
+    width: 100%;
+  }
 
-    .res {
-        box-shadow: 0px 0.5px #ddd;
-        padding-top: 10px;
-        padding-bottom: 10px;
+  .res {
+    box-shadow: 0 0.5px #ddd;
+    padding-top: 10px;
+    padding-bottom: 10px;
 
-        a {
-            float: right;
-            text-align: center;
-            width: 100%;
-            margin: auto;
-        }
+    a {
+      float: right;
+      text-align: center;
+      width: 100%;
+      margin: auto;
     }
-    .resIcon {
-        margin-top: 5px;
-        margin-left: 10px;
-        margin-right: 10px;
-        float: left;
-    }
-    .resultText {
-        width: calc(100% - 40px);
-        display: flex;
-        align-items: center;
-        float: right;
-        font-weight: bold;
-    }
-    .resultSubText {
-        width: calc(100% - 40px);
-        display: flex;
-        align-items: center;
-        float: right;
-    }
-    .resultsList {
-        margin: 0;
-        background-color: white;
-        font-size: 14px;
-    }
+  }
 
-    .resultsList div:hover {
-        cursor: pointer;
-        background-color: #F2FAFC;
-    }
+  .resIcon {
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    float: left;
+  }
+
+  .resultText {
+    width: calc(100% - 40px);
+    display: flex;
+    align-items: center;
+    float: right;
+    font-weight: bold;
+  }
+
+  .resultSubText {
+    width: calc(100% - 40px);
+    display: flex;
+    align-items: center;
+    float: right;
+  }
+
+  .resultsList {
+    margin: 0;
+    background-color: white;
+    font-size: 14px;
+  }
+
+  .resultsList div:hover {
+    cursor: pointer;
+    background-color: #F2FAFC;
+  }
 }
 
 .marker {
-    width: 50px;
-    height: 50px;
-    background-size: 50px;
+  width: 50px;
+  height: 50px;
+  background-size: 50px;
 }
-
 /* Maki Icon Styling */
 .maki {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 15px 15px;
-    width: 15px;
-    height: 15px;
+  background-repeat: no-repeat;
+  background-position: left;
+  background-size: 16px 16px;
 }
 
-.maki.aerialway { background-image: url('./img/maki/aerialway-15.svg'); }
-.maki.airfield { background-image: url('./img/maki/airfield-15.svg'); }
-.maki.airport { background-image: url('./img/maki/airport-15.svg'); }
-.maki.alcohol-shop  { background-image: url('./img/maki/alcohol-shop-15.svg'); }
-.maki.america-football { background-image: url('./img/maki/america-football-15.svg'); }
-.maki.amusement-park { background-image: url('./img/maki/amusement-park-15.svg'); }
-.maki.aquarium { background-image: url('./img/maki/aquarium-15.svg'); }
-.maki.art-gallery { background-image: url('./img/maki/art-gallery-15.svg'); }
-.maki.attraction { background-image: url('./img/maki/attraction-15.svg'); }
-.maki.bakery { background-image: url('./img/maki/bakery-15.svg'); }
-.maki.bank { background-image: url('./img/maki/bank-15.svg'); }
-.maki.bar { background-image: url('./img/maki/bar-15.svg'); }
-.maki.baseball { background-image: url('./img/maki/baseball-15.svg'); }
-.maki.basketball { background-image: url('./img/maki/basketball-15.svg'); }
-.maki.beer { background-image: url('./img/maki/beer-15.svg'); }
-.maki.bicycle { background-image: url('./img/maki/bicycle-15.svg'); }
-.maki.bicycle-share { background-image: url('./img/maki/bicycle-share-15.svg'); }
-.maki.building { background-image: url('./img/maki/building-15.svg'); }
-.maki.bus { background-image: url('./img/maki/bus-15.svg'); }
-.maki.cafe { background-image: url('./img/maki/cafe-15.svg'); }
-.maki.campsite { background-image: url('./img/maki/campsite-15.svg'); }
-.maki.car { background-image: url('./img/maki/car-15.svg'); }
-.maki.castle { background-image: url('./img/maki/castle-15.svg'); }
-.maki.cemetery { background-image: url('./img/maki/cemetery-15.svg'); }
-.maki.cinema { background-image: url('./img/maki/cinema-15.svg'); }
-.maki.circle { background-image: url('./img/maki/circle-15.svg'); }
-.maki.circle-stroked { background-image: url('./img/maki/circle-stroked-15.svg'); }
-.maki.clothing-store { background-image: url('./img/maki/clothing-store-15.svg'); }
-.maki.college { background-image: url('./img/maki/college-15.svg'); }
-.maki.commercial { background-image: url('./img/maki/commercial-15.svg'); }
-.maki.cricket { background-image: url('./img/maki/cricket-15.svg'); }
-.maki.cross { background-image: url('./img/maki/cross-15.svg'); }
-.maki.dam { background-image: url('./img/maki/dam-15.svg'); }
-.maki.danger { background-image: url('./img/maki/danger-15.svg'); }
-.maki.dentist { background-image: url('./img/maki/dentist-15.svg'); }
-.maki.doctor { background-image: url('./img/maki/doctor-15.svg'); }
-.maki.dog-park { background-image: url('./img/maki/dog-park-15.svg'); }
-.maki.drinking-water { background-image: url('./img/maki/drinking-water-15.svg'); }
-.maki.embassy { background-image: url('./img/maki/embassy-15.svg'); }
-.maki.entrance { background-image: url('./img/maki/entrance-15.svg'); }
-.maki.farm { background-image: url('./img/maki/farm-15.svg'); }
-.maki.fast-food { background-image: url('./img/maki/fast-food-15.svg'); }
-.maki.ferry { background-image: url('./img/maki/ferry-15.svg'); }
-.maki.fire-station { background-image: url('./img/maki/fire-station-15.svg'); }
-.maki.fuel { background-image: url('./img/maki/fuel-15.svg'); }
-.maki.garden { background-image: url('./img/maki/garden-15.svg'); }
-.maki.gift { background-image: url('./img/maki/gift-15.svg'); }
-.maki.golf { background-image: url('./img/maki/golf-15.svg'); }
-.maki.grocery { background-image: url('./img/maki/grocery-15.svg'); }
-.maki.hairdresser { background-image: url('./img/maki/hairdresser-15.svg'); }
-.maki.harbor { background-image: url('./img/maki/harbor-15.svg'); }
-.maki.heart { background-image: url('./img/maki/heart-15.svg'); }
-.maki.heliport { background-image: url('./img/maki/heliport-15.svg'); }
-.maki.hospital { background-image: url('./img/maki/hospital-15.svg'); }
-.maki.ice-cream { background-image: url('./img/maki/ice-cream-15.svg'); }
-.maki.industry { background-image: url('./img/maki/industry-15.svg'); }
-.maki.information { background-image: url('./img/maki/information-15.svg'); }
-.maki.laundry { background-image: url('./img/maki/laundry-15.svg'); }
-.maki.library { background-image: url('./img/maki/library-15.svg'); }
-.maki.lighthouse { background-image: url('./img/maki/lighthouse-15.svg'); }
-.maki.lodging { background-image: url('./img/maki/lodging-15.svg'); }
-.maki.marker { background-image: url('./img/maki/marker-15.svg'); }
-.maki.monument { background-image: url('./img/maki/monument-15.svg'); }
-.maki.mountain { background-image: url('./img/maki/mountain-15.svg'); }
-.maki.museum { background-image: url('./img/maki/museum-15.svg'); }
-.maki.music { background-image: url('./img/maki/music-15.svg'); }
-.maki.park { background-image: url('./img/maki/park-15.svg'); }
-.maki.parking { background-image: url('./img/maki/parking-15.svg'); }
-.maki.parking-garage { background-image: url('./img/maki/parking-garage-15.svg'); }
-.maki.pharmacy { background-image: url('./img/maki/pharmacy-15.svg'); }
-.maki.picnic-site { background-image: url('./img/maki/picnic-site-15.svg'); }
-.maki.pitch { background-image: url('./img/maki/pitch-15.svg'); }
-.maki.place-of-worship { background-image: url('./img/maki/place-of-worship-15.svg'); }
-.maki.playground { background-image: url('./img/maki/playground-15.svg'); }
-.maki.police { background-image: url('./img/maki/police-15.svg'); }
-.maki.post { background-image: url('./img/maki/post-15.svg'); }
-.maki.prison { background-image: url('./img/maki/prison-15.svg'); }
-.maki.rail { background-image: url('./img/maki/rail-15.svg'); }
-.maki.rail-light { background-image: url('./img/maki/rail-light-15.svg'); }
-.maki.rail-metro { background-image: url('./img/maki/rail-metro-15.svg'); }
-.maki.ranger-station { background-image: url('./img/maki/ranger-station-15.svg'); }
-.maki.religious-christian { background-image: url('./img/maki/religious-christian-15.svg'); }
-.maki.religious-jewish { background-image: url('./img/maki/religious-jewish-15.svg'); }
-.maki.religious-muslim { background-image: url('./img/maki/religious-muslim-15.svg'); }
-.maki.restaurant { background-image: url('./img/maki/restaurant-15.svg'); }
-.maki.roadblock { background-image: url('./img/maki/roadblock-15.svg'); }
-.maki.rocket { background-image: url('./img/maki/rocket-15.svg'); }
-.maki.school { background-image: url('./img/maki/school-15.svg'); }
-.maki.shelter { background-image: url('./img/maki/shelter-15.svg'); }
-.maki.shop { background-image: url('./img/maki/shop-15.svg'); }
-.maki.skiing { background-image: url('./img/maki/skiing-15.svg'); }
-.maki.soccer { background-image: url('./img/maki/soccer-15.svg'); }
-.maki.square { background-image: url('./img/maki/square-15.svg'); }
-.maki.square-stroke { background-image: url('./img/maki/square-stroke-15.svg'); }
-.maki.stadium { background-image: url('./img/maki/stadium-15.svg'); }
-.maki.star { background-image: url('./img/maki/star-15.svg'); }
-.maki.star-stroke { background-image: url('./img/maki/star-stroke-15.svg'); }
-.maki.suitcase { background-image: url('./img/maki/suitcase-15.svg'); }
-.maki.sushi { background-image: url('./img/maki/sushi-15.svg'); }
-.maki.swimming { background-image: url('./img/maki/swimming-15.svg'); }
-.maki.telephone { background-image: url('./img/maki/telephone-15.svg'); }
-.maki.tennis { background-image: url('./img/maki/tennis-15.svg'); }
-.maki.theatre { background-image: url('./img/maki/theatre-15.svg'); }
-.maki.toilet { background-image: url('./img/maki/toilet-15.svg'); }
-.maki.town-hall { background-image: url('./img/maki/town-hall-15.svg'); }
-.maki.triangle { background-image: url('./img/maki/triangle-15.svg'); }
-.maki.triangle-stroked { background-image: url('./img/maki/triangle-stroked-15.svg'); }
-.maki.veterinary { background-image: url('./img/maki/veterinary-15.svg'); }
-.maki.volcano { background-image: url('./img/maki/volcano-15.svg'); }
-.maki.warehouse { background-image: url('./img/maki/warehouse-15.svg'); }
-.maki.waste-basket { background-image: url('./img/maki/waste-basket-15.svg'); }
-.maki.water { background-image: url('./img/maki/water-15.svg'); }
-.maki.wetland { background-image: url('./img/maki/wetland-15.svg'); }
-.maki.wheelchair { background-image: url('./img/maki/wheelchair-15.svg'); }
-.maki.zoo { background-image: url('./img/maki/zoo-15.svg'); }
+.maki.bar {
+  background-image: url("./img/maki/bar-15.svg");
+  background-origin: content-box;
+}
+
+.maki.cafe {
+  background-image: url("./img/maki/cafe-15.svg");
+  background-origin: content-box;
+}
+
+.maki.fuel {
+  background-image: url("./img/maki/fuel-15.svg");
+  background-origin: content-box;
+}
+
+.maki.lodging {
+  background-image: url("./img/maki/lodging-15.svg");
+  background-origin: content-box;
+}
+
+.maki.restaurant {
+  background-image: url("./img/maki/restaurant-15.svg");
+  background-origin: content-box;
+}
+
+.flex-buttons path {
+  fill: white;
+}
+
+.fill-blue {
+  fill: #448ee4 !important;
+}

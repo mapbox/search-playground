@@ -1,121 +1,193 @@
 <!DOCTYPE html>
 <html lang='en'>
-    <head>
-        <meta charset=utf-8 />
-        <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-        <title>Geocoding Playground | Mapbox</title>
+<head>
+  <meta charset=utf-8 />
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-        <!-- Styling -->
-        <link rel='stylesheet' href='./src/main.scss' />
-        <link href='https://api.mapbox.com/mapbox-assembly/v0.21.2/assembly.min.css' rel='stylesheet'>
-        <script async defer src='https://api.mapbox.com/mapbox-assembly/v0.21.2/assembly.js'></script>
-        <link rel='stylesheet' href='https://unpkg.com/vue-multiselect@2.0.3/dist/vue-multiselect.min.css'>
-        <link href='https://unpkg.com/vue-json-tree@0.3.3/dist/json-tree.css' rel='stylesheet'>
-        <link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
+  <title>Geocoding Playground | Mapbox</title>
 
-        <!-- Vue JS -->
-        <script src='https://unpkg.com/vue@2.5.9/dist/vue.js'></script>
-        <script src='https://unpkg.com/vue-multiselect@2.0.3/dist/vue-multiselect.min.js'></script>
-        <script src='https://unpkg.com/vue-json-tree@0.3.3/dist/json-tree.js'></script>
-        <script src='https://unpkg.com/vue-clipboard2@0.0.8/dist/vue-clipboard.min.js'></script>
-        <script src="https://unpkg.com/v-tooltip"></script>
+  <!-- Styling -->
+  <link rel='stylesheet' href='./src/main.scss' />
+  <link href='https://api.mapbox.com/mapbox-assembly/v0.21.2/assembly.min.css' rel='stylesheet'>
+  <script async defer src='https://api.mapbox.com/mapbox-assembly/v0.21.2/assembly.js'></script>
+  <link rel='stylesheet' href='https://unpkg.com/vue-multiselect@2.0.3/dist/vue-multiselect.min.css'>
+  <link href='https://unpkg.com/vue-json-tree@0.3.3/dist/json-tree.css' rel='stylesheet'>
+  <link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
 
-        <!-- Map -->
-        <script src='https://api.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
-        <link href='https://api.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
-        <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js'></script>
-        <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css' type='text/css'/>
-        <script async src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+  <!-- Vue JS -->
+  <script src='https://unpkg.com/vue@2.5.9/dist/vue.js'></script>
+  <script src='https://unpkg.com/vue-multiselect@2.0.3/dist/vue-multiselect.min.js'></script>
+  <script src='https://unpkg.com/vue-json-tree@0.3.3/dist/json-tree.js'></script>
+  <script src='https://unpkg.com/vue-clipboard2@0.0.8/dist/vue-clipboard.min.js'></script>
+  <script src="https://unpkg.com/v-tooltip"></script>
 
-        <script src='./src/main.js'></script>
-    </head>
-    <body>
-        <div id='app' class='relative'>
-            <div class='grid grid--gut12 py12 px12 bg-default'>
-                <div class='col col--8 col--4-mm relative'>
-                    <template v-if='cnf.type === "poi-category"'>
-                        <div class="col col--12 px48">
-                            <button @click="catClick" type='restaurant' :class="{ 'btn--stroke': query === 'restaurant' }" class='btn my3'>food</button>
-                            <button @click="catClick" type='coffee' :class="{ 'btn--stroke': query === 'coffee' }" class='btn my3'>coffee</button>
-                            <button @click="catClick" type='bar' :class="{ 'btn--stroke': query === 'bar' }" class='btn my3'>bar</button>
-                            <button @click="catClick" type='gas_station' :class="{ 'btn--stroke': query === 'gas_station' }" class='btn my3'>gas</button>
-                            <button @click="catClick" type='hotel' :class="{ 'btn--stroke': query === 'hotel' }" class='btn my3'>hotel</button>
-                        </div>
-                    </template>
-                    <template v-else>
-                        <div class='absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'><use href='#icon-search'></use></svg></div>
-                        <input v-model='query' @focus='searchFocus' class='input bg-white px36' placeholder='Search'>
-                        <div @click='searchClear' class='cursor-pointer absolute top right flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'><use href='#icon-close'></use></svg></div>
-                    </template>
-                </div>
+  <!-- Map -->
+  <script src='https://api.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js'></script>
+  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css' type='text/css' />
+  <script async src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
 
-                <div class='col col--4 col--8-mm'>
-                    <!-- <button @click="invert" v-tooltip="'Flip Coordinates'" v-if='reverse' class='fl btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-rotate'></use></svg></button> -->
-                    <button @click="panelManage('settings')" v-tooltip="'Toggle Settings Panel'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-sprocket'/></svg></button>
-                    <button @click="bugReport" v-tooltip="'Found a bug?'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-bug'></use></svg></button>
-                    <button @click="shareClick" v-tooltip="'Open API URL'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-share'/></svg></button>
-                    <button @click="panelManage('json')" v-tooltip="'Toggle JSON Panel'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-code'/></svg></button>
-                </div>
+  <script src='./src/main.js'></script>
+</head>
+
+<body>
+  <div id='app' class='relative'>
+    <div class='grid grid--gut12 py12 px12 bg-default'>
+      <template v-if='cnf.type === "poi-category"'>
+        <div class="flex-buttons">
+          <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'restaurant' }" class='padding-button btn btn--default' type='restaurant'>
+            <svg version="1.1"
+               id="svg4619" inkscape:version="0.91 r" sodipodi:docname="restaurant-15.svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg"
+               xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="15px" height="15px"
+               viewBox="0 0 15 15" style="enable-background:new 0 0 15 15;" xml:space="preserve"  type='restaurant'>
+            <path id="path11774" :class="{ 'fill-blue' : query === 'restaurant' }" type='restaurant' d="M3.5,0l-1,5.5c-0.1464,0.805,1.7815,1.181,1.75,2L4,14c-0.0384,0.9993,1,1,1,1s1.0384-0.0007,1-1L5.75,7.5
+              c-0.0314-0.8176,1.7334-1.1808,1.75-2L6.5,0H6l0.25,4L5.5,4.5L5.25,0h-0.5L4.5,4.5L3.75,4L4,0H3.5z M12,0
+              c-0.7364,0-1.9642,0.6549-2.4551,1.6367C9.1358,2.3731,9,4.0182,9,5v2.5c0,0.8182,1.0909,1,1.5,1L10,14c-0.0905,0.9959,1,1,1,1
+              s1,0,1-1V0z"/>
+            </svg>
+          </button>
+          <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'coffee' }" class='padding-button btn btn--default' type='coffee'>
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+              x="0px" y="0px" width="15px" height="15px" viewBox="0 0 15 15" style="enable-background:new 0 0 15 15;" xml:space="preserve" type='coffee'>
+              <path type='coffee' :class="{ 'fill-blue' : query === 'coffee' }" d="M12,5h-2V3H2v4c0.0133,2.2091,1.8149,3.9891,4.024,3.9758C7.4345,10.9673,8.7362,10.2166,9.45,9H12c1.1046,0,2-0.8954,2-2
+            S13.1046,5,12,5z M12,8H9.86C9.9487,7.6739,9.9958,7.3379,10,7V6h2c0.5523,0,1,0.4477,1,1S12.5523,8,12,8z M10,12.5
+            c0,0.2761-0.2239,0.5-0.5,0.5h-7C2.2239,13,2,12.7761,2,12.5S2.2239,12,2.5,12h7C9.7761,12,10,12.2239,10,12.5z" />
+            </svg>
+          </button>
+          <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'bar' }" class='padding-button btn btn--default' type='bar'>
+            <svg version="1.1" id="svg4619" inkscape:version="0.91+devel+osxmenu r12911" sodipodi:docname="bar-15.svg"
+              xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+              xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="15px" height="15px" viewBox="0 0 15 15" style="enable-background:new 0 0 15 15;" xml:space="preserve" type='bar'>
+              <path id="path4" type='bar' :class="{ 'fill-blue' : query === 'bar' }" inkscape:connector-curvature="0" sodipodi:nodetypes="sccsccsccszccccz" d="M7.5,1c-2,0-7,0.25-6.5,0.75L7,8v4
+            c0,1-3,0.5-3,2h7c0-1.5-3-1-3-2V8l6-6.25C14.5,1.25,9.5,1,7.5,1z M7.5,2c2.5,0,4.75,0.25,4.75,0.25L11.5,3h-8L2.75,2.25
+            C2.75,2.25,5,2,7.5,2z" />
+            </svg>
+          </button>
+          <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'gas_station' }" class='padding-button btn btn--default' type='gas_station'>
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+              x="0px" y="0px" width="15px" height="15px" viewBox="0 0 15 15" style="enable-background:new 0 0 15 15;" xml:space="preserve" type='gas_station'>
+              <path type='gas_station' :class="{ 'fill-blue' : query === 'gas_station' }" d="M13,6L13,6v5.5c0,0.2761-0.2239,0.5-0.5,0.5S12,11.7761,12,11.5v-2C12,8.6716,11.3284,8,10.5,8H9V2c0-0.5523-0.4477-1-1-1H2
+            C1.4477,1,1,1.4477,1,2v11c0,0.5523,0.4477,1,1,1h6c0.5523,0,1-0.4477,1-1V9h1.5C10.7761,9,11,9.2239,11,9.5v2
+            c0,0.8284,0.6716,1.5,1.5,1.5s1.5-0.6716,1.5-1.5V5c0-0.5523-0.4477-1-1-1l0,0V2.49C12.9946,2.2178,12.7723,1.9999,12.5,2
+            c-0.2816,0.0047-0.5062,0.2367-0.5015,0.5184C11.9987,2.5289,11.9992,2.5395,12,2.55V5C12,5.5523,12.4477,6,13,6s1-0.4477,1-1
+            s-0.4477-1-1-1 M8,6.5C8,6.7761,7.7761,7,7.5,7h-5C2.2239,7,2,6.7761,2,6.5v-3C2,3.2239,2.2239,3,2.5,3h5C7.7761,3,8,3.2239,8,3.5
+            V6.5z" />
+            </svg>
+          </button>
+          <button @click="catClick" :class="{ 'btn btn--white color-blue' : query === 'hotel' }" class='padding-button btn btn--default' type='hotel'>
+            <svg version="1.1" id="svg4619" inkscape:version="0.91+devel+osxmenu r12911" sodipodi:docname="lodging-15.svg"
+              xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+              xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="15px" height="15px" viewBox="0 0 15 15" style="enable-background:new 0 0 15 15;" xml:space="preserve" type='hotel' >
+              <path type='hotel' :class="{ 'fill-blue' : query === 'hotel' }" id="rect6507" d="M0.5,2.5C0.2,2.5,0,2.7,0,3v7.5v2C0,12.8,0.2,13,0.5,13S1,12.8,1,12.5V11h13v1.5
+            c0,0.3,0.2,0.5,0.5,0.5s0.5-0.2,0.5-0.5v-2c0-0.3-0.2-0.5-0.5-0.5H1V3C1,2.7,0.8,2.5,0.5,2.5z M3.5,3C2.7,3,2,3.7,2,4.5l0,0
+            C2,5.3,2.7,6,3.5,6l0,0C4.3,6,5,5.3,5,4.5l0,0C5,3.7,4.3,3,3.5,3L3.5,3z M7,4C5.5,4,5.5,5.5,5.5,5.5V7h-3C2.2,7,2,7.2,2,7.5v1
+            C2,8.8,2.2,9,2.5,9H6h9V6.5C15,4,12.5,4,12.5,4H7z" />
+            </svg>
+          </button>
+        </div>
+      </template>
+      <template v-else>
+        <div class='col col--8 col--4-mm relative'>
+          <div class='absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'>
+              <use href='#icon-search'></use>
+            </svg></div>
+          <input v-model='query' @focus='searchFocus' class='input bg-white px36' placeholder='Search'>
+          <div @click='searchClear' class='cursor-pointer absolute top right flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'>
+              <use href='#icon-close'></use>
+            </svg></div>
+        </div>
+      </template>
+
+      <div class='col'>
+        <!-- <button @click="invert" v-tooltip="'Flip Coordinates'" v-if='reverse' class='fl btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-rotate'></use></svg></button> -->
+        <!-- <button @click="panelManage('settings')" v-tooltip="'Toggle Settings Panel'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-sprocket'/></svg></button> -->
+        <!-- <button @click="bugReport" v-tooltip="'Found a bug?'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'><use href='#icon-bug'></use></svg></button> -->
+        <button @click="shareClick" v-tooltip="'Open API URL'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'>
+            <use href='#icon-share' /></svg></button>
+        <button @click="panelManage('json')" v-tooltip="'Toggle JSON Panel'" class='fr btn h36 round bg-default transition bg-default-dark-on-hover color-blue-on-hover'><svg class='icon'>
+            <use href='#icon-code' /></svg></button>
+      </div>
+    </div>
+    <div class="flex-map">
+      <div id='map'></div>
+      <!-- Settings -->
+      <div v-if='settingsPanel' class='left-pane bg-white'>
+        <div class='grid px24 py24'>
+          <div class='col col--12'>
+            <h2 class='txt-h3 fl'>Settings</h2>
+            <button v-tooltip='"Toggle Raw URL View"' @click="urlview = !urlview" class='btn round fr'><svg class='icon'>
+                <use href='#icon-eye'></use>
+              </svg></button>
+          </div>
+
+          <template v-if='urlview'>
+            <div class='col col--12 py6 border-b border--gray-light'>
+              <h3 class='txt-h4 fl py3'>Raw API Request</h3>
+              <textarea v-if='urlview' v-model="url" readonly placeholder='API URL' class='textarea w-full h180'></textarea>
             </div>
-            <!-- Settings -->
-            <div v-if='settingsPanel' class='left-pane w-full w600-mm bg-white'>
-                <div class='grid px24 py24'>
-                    <div class='col col--12'>
-                        <h2 class='txt-h3 fl'>Settings</h2>
-                        <button v-tooltip='"Toggle Raw URL View"' @click="urlview = !urlview" class='btn round fr'><svg class='icon'><use href='#icon-eye'></use></svg></button>
-                    </div>
-
-                    <template v-if='urlview'>
-                        <div class='col col--12 py6 border-b border--gray-light'>
-                            <h3 class='txt-h4 fl py3'>Raw API Request</h3>
-                            <textarea v-if='urlview' v-model="url" readonly placeholder='API URL' class='textarea w-full h180'></textarea>
-                        </div>
-                    </template>
+          </template>
 
 
-                    <div class='col col--12'>
+          <div class='col col--12'>
 
-                        <!--Proximity Filter-->
-                        <div class='col col--12'>
-                            <div class="col col--12 py12">
-                                <!-- <label class='switch-container fl pr12'>
+            <!--Proximity Filter-->
+            <div class='col col--12'>
+              <div class="col col--12 py12">
+                <!-- <label class='switch-container fl pr12'>
                                     <input v-model="cnf.onProximity" type='checkbox' checked/>
                                     <div class='switch'></div>
                                 </label> -->
-                                <h3 class='txt-h4'>Proximity Bias <svg @click="help()" class='fr ml12 icon cursor-pointer color-gray-light color-gray-dark-on-hover'><use href='#icon-info'/></svg></h3>
-                            </div>
+                <h3 class='txt-h4'>Proximity Bias <svg @click="help()" class='fr ml12 icon cursor-pointer color-gray-light color-gray-dark-on-hover'>
+                    <use href='#icon-info' /></svg></h3>
+              </div>
 
-                            <div class="col col--12 px48 relative">
-                                <div @click="proximityManualClick" class='cursor-pointer absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><span v-tooltip="'zoom to proximity location on map'"><svg class='icon'><use href='#icon-crosshair'></use></svg></span></div>
-                                <input id="proximityInput" v-model="cnf.proximity" class="input px36" id='bboxInput' type='text' placeholder='Longitude,Latitude'/>
-                                <div @click="proximityClick" class='cursor-pointer absolute top right flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><span v-tooltip="'picks current location as Proximity'"><svg class='icon'><use href='#icon-compass'></use></svg></span></div>
-                            </div>
-                        </div>
+              <div class="col col--12 px48 relative">
+                <div @click="proximityManualClick" class='cursor-pointer absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><span v-tooltip="'zoom to proximity location on map'"><svg class='icon'>
+                      <use href='#icon-crosshair'></use>
+                    </svg></span></div>
+                <input id="proximityInput" v-model="cnf.proximity" class="input px36" id='bboxInput' type='text' placeholder='Longitude,Latitude' />
+                <div @click="proximityClick" class='cursor-pointer absolute top right flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><span v-tooltip="'picks current location as Proximity'"><svg class='icon'>
+                      <use href='#icon-compass'></use>
+                    </svg></span></div>
+              </div>
+            </div>
 
-                        <!-- Types Filter -->
-                        <div class='col col--12 py12'>
-                            <h3 class='txt-h4'>Search type</h3>
-                            <div class="col col--12 px48">
-                               <div class="toggle-group mr48 py12">
-                                    <label class="toggle-container">
-                                        <input :checked="cnf.type == 'address'" name='toggle-1' @click="typeClick" type='radio' value="address" />
-                                        <div class="toggle">Address</div>
-                                    </label>
-                                    <label class="toggle-container">
-                                        <input :checked="cnf.type == 'poi-search'" name='toggle-1' @click="typeClick" type='radio' value="poi-search"/>
-                                        <div class="toggle">POI Search</div>
-                                    </label>
-                                    <label class="toggle-container">
-                                        <input :checked="cnf.type == 'poi-category'" name='toggle-1' @click="typeClick" type='radio' value="poi-category"/>
-                                        <div class="toggle">POI Category</div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Types Filter -->
+            <div class='col col--12 py12'>
+              <h3 class='txt-h4'>Search type</h3>
+              <div class="col col--12 px48">
+                <div class="toggle-group mr48 py12">
+                  <label class="toggle-container">
+                    <input :checked="cnf.type == 'address'" name='toggle-1' @click="typeClick" type='radio' value="address" />
+                    <div class="toggle">Address</div>
+                  </label>
+                  <label class="toggle-container">
+                    <input :checked="cnf.type == 'poi-search'" name='toggle-1' @click="typeClick" type='radio' value="poi-search" />
+                    <div class="toggle">POI Search</div>
+                  </label>
+                  <label class="toggle-container">
+                    <input :checked="cnf.type == 'poi-category'" name='toggle-1' @click="typeClick" type='radio' value="poi-category" />
+                    <div class="toggle">POI Category</div>
+                  </label>
+                </div>
+              </div>
+            </div>
 
-                        <!--Limit-->
-                        <!-- <div class='col col--12'>
+            <!-- Basemap switcher -->
+            <!-- <div class='col col--12 py12'>
+                            <h3 class='txt-h4'>Change Basemap</h3>
+                            <div class="flex">
+                              <div id='style-sat' class='style' @click="setStyle('mapbox://styles/mapbox/satellite-v9')"></div>
+                              <div id='style-str' class='style' @click="setStyle('mapbox://styles/mapbox/streets-v11')"></div>
+                              <div id='style-drk' class='style' @click="setStyle('mapbox://styles/mapbox/dark-v9')"></div>
+                              <div id='style-lgt' class='style' @click="setStyle('mapbox://styles/mapbox/light-v9')"></div>
+                            </div>
+                        </div> -->
+
+            <!--Limit-->
+            <!-- <div class='col col--12'>
                             <div class="col col--12 py12">
                                 <label class='switch-container fl pr12'>
                                     <input v-model="cnf.onLimit" type='checkbox' checked/>
@@ -129,8 +201,8 @@
                             </div>
                         </div> -->
 
-                        <!--Language Filter-->
-                        <!-- <div class='col col--12'>
+            <!--Language Filter-->
+            <!-- <div class='col col--12'>
                             <div class="col col--12 py12">
                                 <label class='switch-container fl pr12'>
                                     <input v-model="cnf.onLanguage" type='checkbox' checked/>
@@ -145,24 +217,23 @@
                         </div> -->
 
 
-                    </div>
-                </div>
-            </div>
+          </div>
+        </div>
+      </div>
 
-            <!-- JSON Response -->
-            <div v-if="jsonPanel" class='left-pane w-full w600-mm bg-white px24 py24'>
-                <button v-clipboard:copy="cnf.onDebug ? JSON.stringify(vtQueryResults, null, 4) : JSON.stringify(geocoderResults, null, 4)" class='fr btn h36 round bg-default transition bg-default-dark-on-hover'><svg class='icon'><use href='#icon-clipboard'/></svg></button>
-                <pre><json-tree :raw="cnf.onDebug ? JSON.stringify(vtQueryResults, null, 4) : JSON.stringify(geocoderResults, null, 4)"></json-tree></pre>
-            </div>
-
-            <div id='map'></div>
-
-            <!-- Search Results -->
-            <div class='resultContainer clearfix'>
-                <div class='results col5'>
-                    <div class='resultsList'>
-                        <div v-for="(res, res_it) res in (cnf.type === 'address' ? suggestResults : geocoderResults.features)" class="res clearfix" :result="res_it" @mouseenter="resultEnter" @mouseleave="resultLeave" @click="resultClick">
-                            <!-- <template v-if="res.id.toString().split('.')[0] == 'address'">
+      <!-- JSON Response -->
+      <div v-if="jsonPanel" class='left-pane left-pane-json bg-white px24 py24'>
+        <button v-clipboard:copy="cnf.onDebug ? JSON.stringify(vtQueryResults, null, 4) : JSON.stringify(geocoderResults, null, 4)" class='fr btn h36 round bg-default transition bg-default-dark-on-hover'><svg class='icon'>
+            <use href='#icon-clipboard' /></svg></button>
+        <pre><json-tree :raw="cnf.onDebug ? JSON.stringify(vtQueryResults, null, 4) : JSON.stringify(geocoderResults, null, 4)"></json-tree></pre>
+      </div>
+    </div>
+    <!-- Search Results -->
+    <div class='resultContainer clearfix'>
+      <div class='results col5'>
+        <div class='resultsList'>
+          <div v-for="(res, res_it) res in (cnf.type === 'address' ? suggestResults : geocoderResults.features)" class="res clearfix" :result="res_it" @mouseenter="resultEnter" @mouseleave="resultLeave" @click="resultClick">
+            <!-- <template v-if="res.id.toString().split('.')[0] == 'address'">
                                 <template v-if="res.id.split('.')[0] === '0'">
                                     <div class="resIcon" :result="res_it">
                                         <svg class='icon'><use href='#icon-line-center'/></svg>
@@ -203,22 +274,19 @@
                                 <div class="resIcon maki" :result="res_it" :class="[ res.properties.maki ]"></div>
                             </template> -->
 
-                            <div class="resultText" :result="res_it" v-text="cnf.type === 'address' ? res.matching_name : res.properties.place_name"></div>
-                            <div class="resultSubText" :result="res_it" v-text="cnf.type === 'address' ? res.description : null"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- mode pop up -->
-                <div v-if='getlocation' class="grid grid-gut12 absolute bottom z1 w-full">
-                    <div class='col round col--3 relative px12 py12 bg-blue align-center color-white mx60 my30'>
-                        <h4 class='txt-h4 fl'>Click on the map to set proximity</h4>
-                    </div>
-                </div>
-
-            <div id='style-sat' class='style' @click="setStyle('mapbox://styles/mapbox/satellite-v9')"></div>
-            <div id='style-def' class='style' @click="setStyle('mapbox://styles/mapbox/streets-v8')"></div>
-            <div id='style-drk' class='style' @click="setStyle('mapbox://styles/mapbox/dark-v9')"></div>
+            <div class="resultText" :result="res_it" v-text="cnf.type === 'address' ? res.matching_name : res.properties.place_name"></div>
+            <div class="resultSubText" :result="res_it" v-text="cnf.type === 'address' ? res.description : null"></div>
+          </div>
         </div>
-    </body>
+      </div>
+    </div>
+    <!-- mode pop up -->
+    <div v-if='getlocation' class="grid grid-gut12 absolute bottom z1 w-full">
+      <div class='col round col--3 relative px12 py12 bg-blue align-center color-white mx60 my30'>
+        <h4 class='txt-h4 fl'>Click on the map to set proximity</h4>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>
