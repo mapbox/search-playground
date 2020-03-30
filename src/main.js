@@ -388,7 +388,7 @@ window.onload = () => {
                 this.cnf.proximity = `${lngLat.lng.toFixed(6)},${lngLat.lat.toFixed(6)}`;
             },
             catClick: function(e) {
-                this.query = e.target.target.getAttribute('type');
+                this.query = e.target.getAttribute('type');
             },
 
             resultEnter: function(e) {
