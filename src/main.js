@@ -132,7 +132,7 @@ window.onload = () => {
         // Called after the instance has been mounted-- now ready to add map
         mounted: function() {
             this.$nextTick(function() {
-                this.setLanguage(navigator.language.split('-')[0]);
+                (typeof this.cnf.language === 'object') ? this.setLanguage(navigator.language.split('-')[0]) : this.setLanguage(this.cnf.language);
                 mapboxgl.accessToken = this.credentials.map.key;
                 this.map = new mapboxgl.Map({
                     container: 'map',
@@ -246,6 +246,7 @@ window.onload = () => {
                 let langObj = this.languages.find(langObj => langObj.code == lang);
                 langObj ? langObj : { code: 'en', name: 'English' };
                 this.cnf.language = langObj;
+                this.updateQueryString();
             },
             countryFind: function(query) {
                 if (!query.length) return;
@@ -264,7 +265,9 @@ window.onload = () => {
             },
             updateQueryString: function() {
                 // Update URL search
-                let cnf = Object.keys(this.cnf).map(key => key + '=' + this.cnf[key]).join('&');
+                let cnf = Object.keys(this.cnf).map(key => {
+                  return (key === 'language') ? `${key}=${this.cnf[key].code}` : `${key}=${this.cnf[key]}`;
+                }).join('&');
                 // Add query to string
                 if (this.query) {
                   cnf = `${cnf}&query=${this.query}`
