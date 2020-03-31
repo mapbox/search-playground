@@ -35,66 +35,66 @@ window.onload = () => {
             geocoderResults: { type: 'FeatureCollection', features: [] },
             // Results from querying vector tiles
             languages: [
-                { code: 'ar', name: 'Arabic' },
-                { code: 'az', name: 'Azerbaijani' },
-                { code: 'bg', name: 'Bulgarian' },
-                { code: 'bn', name: 'Bengali' },
-                { code: 'bs', name: 'Bosnian' },
-                { code: 'ca', name: 'Catalan' },
-                { code: 'cs', name: 'Czech' },
-                { code: 'da', name: 'Danish' },
-                { code: 'de', name: 'German' },
-                { code: 'el', name: 'Greek' },
+                // { code: 'ar', name: 'Arabic' },
+                // { code: 'az', name: 'Azerbaijani' },
+                // { code: 'bg', name: 'Bulgarian' },
+                // { code: 'bn', name: 'Bengali' },
+                // { code: 'bs', name: 'Bosnian' },
+                // { code: 'ca', name: 'Catalan' },
+                // { code: 'cs', name: 'Czech' },
+                // { code: 'da', name: 'Danish' },
+                // { code: 'de', name: 'German' },
+                // { code: 'el', name: 'Greek' },
                 { code: 'en', name: 'English' },
-                { code: 'es', name: 'Spanish' },
-                { code: 'et', name: 'Estonian' },
-                { code: 'fa', name: 'Persian' },
-                { code: 'fi', name: 'Finnish' },
+                // { code: 'es', name: 'Spanish' },
+                // { code: 'et', name: 'Estonian' },
+                // { code: 'fa', name: 'Persian' },
+                // { code: 'fi', name: 'Finnish' },
                 { code: 'fr', name: 'French' },
-                { code: 'gu', name: 'Gujarati' },
-                { code: 'he', name: 'Hebrew' },
-                { code: 'hi', name: 'Hindi' },
-                { code: 'hr', name: 'Croatian' },
-                { code: 'hu', name: 'Hungarian' },
-                { code: 'id', name: 'Indonesian' },
-                { code: 'is', name: 'Icelandic' },
-                { code: 'it', name: 'Italian' },
-                { code: 'ja', name: 'Japanese' },
-                { code: 'ka', name: 'Georgian' },
-                { code: 'kk', name: 'Kazakh' },
-                { code: 'kn', name: 'Kannada' },
-                { code: 'ko', name: 'Korean' },
-                { code: 'lt', name: 'Lithuanian' },
-                { code: 'lv', name: 'Latvian' },
-                { code: 'mk', name: 'Macedonian' },
-                { code: 'mn', name: 'Mongolian' },
-                { code: 'ms', name: 'Malay' },
-                { code: 'mt', name: 'Maltese' },
-                { code: 'nb', name: 'Norwegian Bokmål' },
+                // { code: 'gu', name: 'Gujarati' },
+                // { code: 'he', name: 'Hebrew' },
+                // { code: 'hi', name: 'Hindi' },
+                // { code: 'hr', name: 'Croatian' },
+                // { code: 'hu', name: 'Hungarian' },
+                // { code: 'id', name: 'Indonesian' },
+                // { code: 'is', name: 'Icelandic' },
+                // { code: 'it', name: 'Italian' },
+                // { code: 'ja', name: 'Japanese' },
+                // { code: 'ka', name: 'Georgian' },
+                // { code: 'kk', name: 'Kazakh' },
+                // { code: 'kn', name: 'Kannada' },
+                // { code: 'ko', name: 'Korean' },
+                // { code: 'lt', name: 'Lithuanian' },
+                // { code: 'lv', name: 'Latvian' },
+                // { code: 'mk', name: 'Macedonian' },
+                // { code: 'mn', name: 'Mongolian' },
+                // { code: 'ms', name: 'Malay' },
+                // { code: 'mt', name: 'Maltese' },
+                // { code: 'nb', name: 'Norwegian Bokmål' },
                 { code: 'nl', name: 'Dutch' },
-                { code: 'no', name: 'Norwegian' },
-                { code: 'pl', name: 'Polish' },
-                { code: 'pt', name: 'Portuguese' },
-                { code: 'ro', name: 'Romanian' },
-                { code: 'ru', name: 'Russian' },
-                { code: 'si', name: 'Sinhala' },
-                { code: 'sk', name: 'Slovak' },
-                { code: 'sl', name: 'Slovenian' },
-                { code: 'sq', name: 'Albanian' },
-                { code: 'sr', name: 'Serbian' },
-                { code: 'sv', name: 'Swedish' },
-                { code: 'ta', name: 'Tamil' },
-                { code: 'te', name: 'Telugu' },
-                { code: 'tg', name: 'Tajik' },
-                { code: 'th', name: 'Thai' },
-                { code: 'tk', name: 'Turkmen' },
-                { code: 'tl', name: 'Tagalog' },
-                { code: 'tr', name: 'Turkish' },
-                { code: 'uk', name: 'Ukrainian' },
-                { code: 'ur', name: 'Urdu' },
-                { code: 'uz', name: 'Uzbek' },
-                { code: 'vi', name: 'Vietnamese' },
-                { code: 'zh', name: 'Chinese' }
+                // { code: 'no', name: 'Norwegian' },
+                // { code: 'pl', name: 'Polish' },
+                // { code: 'pt', name: 'Portuguese' },
+                // { code: 'ro', name: 'Romanian' },
+                // { code: 'ru', name: 'Russian' },
+                // { code: 'si', name: 'Sinhala' },
+                // { code: 'sk', name: 'Slovak' },
+                // { code: 'sl', name: 'Slovenian' },
+                // { code: 'sq', name: 'Albanian' },
+                // { code: 'sr', name: 'Serbian' },
+                // { code: 'sv', name: 'Swedish' },
+                // { code: 'ta', name: 'Tamil' },
+                // { code: 'te', name: 'Telugu' },
+                // { code: 'tg', name: 'Tajik' },
+                // { code: 'th', name: 'Thai' },
+                // { code: 'tk', name: 'Turkmen' },
+                // { code: 'tl', name: 'Tagalog' },
+                // { code: 'tr', name: 'Turkish' },
+                // { code: 'uk', name: 'Ukrainian' },
+                // { code: 'ur', name: 'Urdu' },
+                // { code: 'uz', name: 'Uzbek' },
+                // { code: 'vi', name: 'Vietnamese' },
+                // { code: 'zh', name: 'Chinese' }
             ],
             layers: [],
             defaultCnf: '', //Stores a stringified version of below for resetting to default state
@@ -106,7 +106,7 @@ window.onload = () => {
                 proximity: '4.433592,50.878676',
                 type: 'address',
                 limit: '5',
-                languages: [],
+                language: {},
             },
             hostname: location.hostname,
             getlocation: false,
@@ -132,6 +132,7 @@ window.onload = () => {
         // Called after the instance has been mounted-- now ready to add map
         mounted: function() {
             this.$nextTick(function() {
+                (typeof this.cnf.language === 'object') ? this.setLanguage(navigator.language.split('-')[0]) : this.setLanguage(this.cnf.language);
                 mapboxgl.accessToken = this.credentials.map.key;
                 this.map = new mapboxgl.Map({
                     container: 'map',
@@ -213,7 +214,7 @@ window.onload = () => {
             'cnf.limit': function() { return this.search(); },
             'cnf.autocomplete': function() { return this.search(); },
             'cnf.onLanguage': function() { return this.search(); },
-            'cnf.languages': function() { return this.search(); },
+            'cnf.language': function() { return this.search(); },
             'cnf.languageStrict': function() { return this.search(); },
             'cnf.routing': function() { return this.search(); },
             'cnf.localsearch': function() { return this.search(); }
@@ -241,6 +242,12 @@ window.onload = () => {
                     this.settingsPanel = false;
                 }
             },
+            setLanguage: function(lang) {
+                let langObj = this.languages.find(langObj => langObj.code == lang);
+                langObj ? langObj : { code: 'en', name: 'English' };
+                this.cnf.language = langObj;
+                this.updateQueryString();
+            },
             countryFind: function(query) {
                 if (!query.length) return;
                 let xhr = new XMLHttpRequest(query);
@@ -258,7 +265,9 @@ window.onload = () => {
             },
             updateQueryString: function() {
                 // Update URL search
-                let cnf = Object.keys(this.cnf).map(key => key + '=' + this.cnf[key]).join('&');
+                let cnf = Object.keys(this.cnf).map(key => {
+                  return (key === 'language') ? `${key}=${this.cnf[key].code}` : `${key}=${this.cnf[key]}`;
+                }).join('&');
                 // Add query to string
                 if (this.query) {
                   cnf = `${cnf}&query=${this.query}`
@@ -278,13 +287,13 @@ window.onload = () => {
                 let url = '';
 
                 if(this.cnf.type === 'address') {
-                    url = `${this.credentials[env].suggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                    url = `${this.credentials[env].suggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=5`;
                 } else if(this.cnf.type === 'poi-search') {
-                    url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                    url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=10`;
                } else if(this.cnf.type === 'poi-category') {
-                    url = `${this.credentials[env].poiUrl}/category/search/${encodeURIComponent(this.query)}?access_token=${accessToken}&language=en`;
+                    url = `${this.credentials[env].poiUrl}/category/search/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=20`;
                 }
                 // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
@@ -292,7 +301,7 @@ window.onload = () => {
 
                 if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
                 // if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
-                // if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
+                if (this.cnf.onLanguage && this.cnf.language) url = `${url}&language=${encodeURIComponent(this.cnf.language.code)}`;
 
                 this.url = url;
 
