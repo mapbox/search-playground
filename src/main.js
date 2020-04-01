@@ -138,7 +138,7 @@ window.onload = () => {
                     container: 'map',
                     style: 'mapbox://styles/mapbox/streets-v11',
                     center: [4.433592,50.878676],
-                    zoom: 5
+                    zoom: 10
                 });
                 const bboxDrawModes = MapboxDraw.modes;
                 bboxDrawModes.draw_rectangle = DrawRectangle;
