@@ -43,10 +43,10 @@ window.onload = () => {
                 // { code: 'ca', name: 'Catalan' },
                 // { code: 'cs', name: 'Czech' },
                 // { code: 'da', name: 'Danish' },
-                // { code: 'de', name: 'German' },
+                { code: 'de', name: 'German' },
                 // { code: 'el', name: 'Greek' },
                 { code: 'en', name: 'English' },
-                // { code: 'es', name: 'Spanish' },
+                { code: 'es', name: 'Spanish' },
                 // { code: 'et', name: 'Estonian' },
                 // { code: 'fa', name: 'Persian' },
                 // { code: 'fi', name: 'Finnish' },
@@ -58,7 +58,7 @@ window.onload = () => {
                 // { code: 'hu', name: 'Hungarian' },
                 // { code: 'id', name: 'Indonesian' },
                 // { code: 'is', name: 'Icelandic' },
-                // { code: 'it', name: 'Italian' },
+                { code: 'it', name: 'Italian' },
                 // { code: 'ja', name: 'Japanese' },
                 // { code: 'ka', name: 'Georgian' },
                 // { code: 'kk', name: 'Kazakh' },
@@ -362,6 +362,7 @@ window.onload = () => {
                 window.open(this.url, '_newtab');
             },
             typeClick: function(e) {
+                debugger;
                 let searchType = e.target.value;
                 // this.cnf.typeToggle[type] = !this.cnf.typeToggle[type];
                 this.cnf.type = searchType;
