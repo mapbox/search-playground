@@ -36,7 +36,16 @@
   <div id='app' class='relative'>
     <div class='grid grid--gut12 py12 px12 bg-default'>
       <template v-if='cnf.type === "poi-category"'>
-        <div class="flex-buttons">
+        <div class='col col--4 relative'>
+          <div class='absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'>
+              <use href='#icon-search'></use>
+            </svg></div>
+          <input v-model='query' @focus='searchFocus' class='input bg-white px36' placeholder='Search'>
+          <div @click='searchClear' class='cursor-pointer absolute top right flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'>
+              <use href='#icon-close'></use>
+            </svg></div>
+        </div>
+        <div class="flex-buttons col col--4 relative">
           <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'restaurant' }" class='padding-button btn btn--default' type='restaurant'>
             <svg version="1.1"
                id="svg4619" inkscape:version="0.91 r" sodipodi:docname="restaurant-15.svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg"
