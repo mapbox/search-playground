@@ -240,8 +240,8 @@
     <!-- Search Results -->
     <div class='resultContainer clearfix'>
       <div class='results col5'>
-        <div class='resultsList'>
-          <div v-for="(res, res_it) res in (cnf.type === 'address' ? suggestResults : geocoderResults.features)" class="res clearfix" :result="res_it" @mouseenter="resultEnter" @mouseleave="resultLeave" @click="resultClick">
+        <div class='resultsList' v-if='query'>
+          <div v-for="(res, res_it) res in suggestResults" class="res clearfix" :result="res_it" @mouseenter="resultEnter" @mouseleave="resultLeave" @click="resultClick">
             <!-- <template v-if="res.id.toString().split('.')[0] == 'address'">
                                 <template v-if="res.id.split('.')[0] === '0'">
                                     <div class="resIcon" :result="res_it">
@@ -283,8 +283,8 @@
                                 <div class="resIcon maki" :result="res_it" :class="[ res.properties.maki ]"></div>
                             </template> -->
 
-            <div class="resultText" :result="res_it" v-text="cnf.type === 'address' ? res.matching_name : res.properties.place_name"></div>
-            <div class="resultSubText" :result="res_it" v-text="cnf.type === 'address' ? res.description : null"></div>
+            <div class="resultText" :result="res_it" v-text="res.name"></div>
+            <div class="resultSubText" :result="res_it" v-text="res.description"></div>
           </div>
         </div>
       </div>

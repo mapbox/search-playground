@@ -293,7 +293,8 @@ window.onload = () => {
                     url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=10`;
                } else if(this.cnf.type === 'poi-category') {
-                    url = `${this.credentials[env].poiUrl}/category/search/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
+                    const subType = this.cnf.subType === 'search' ? 'search' : 'suggest';
+                    url = `${this.credentials[env].poiUrl}/category/${subType}/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=20`;
                 }
                 // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
@@ -312,19 +313,28 @@ window.onload = () => {
                     // to make sure a slow query doesn't overwrite the automcomplete display
                     if (this.searchTime <= searchTime) {
                         this.searchTime = searchTime;
-                        this.geocoderResults.features.splice(0, this.geocoderResults.features.length); //Clear Results
-                        this.suggestResults.splice(0, this.suggestResults.length); //Clear Results
+                        this.geocoderResults.features = []; //Clear Results
+                        this.suggestResults = []; //Clear Results
 
                         if (xhr.status !== 200) {
                             //TODO ERROR HANDLING
                         } else {
                             if (this.cnf.type === 'address') {
                                 for (let sugg of JSON.parse(xhr.responseText)) {
+                                    sugg.name = sugg.matching_name;
+                                    this.suggestResults.push(sugg);
+                                }
+                            } else if(this.cnf.type === 'poi-category' && this.cnf.subType !== 'search') {
+                                for (let sugg of JSON.parse(xhr.responseText).categories) {
+                                    sugg.id = sugg.category_id;
                                     this.suggestResults.push(sugg);
                                 }
                             } else {
                                 for (let feat of JSON.parse(xhr.responseText).features) {
                                     this.geocoderResults.features.push(feat);
+                                    feat.name = feat.properties.place_name;
+                                    feat.id = feat.properties.id;
+                                    this.suggestResults.push(feat);
                                 }
 
                                 if (this.fitZoom) {
@@ -342,10 +352,12 @@ window.onload = () => {
             },
             searchClear: function(e) {
                 this.query = '';
-                this.geocoderResults.features.splice(0, this.geocoderResults.features.length); //Clear Results
-                this.suggestResults.splice(0, this.suggestResults.length); //Clear Results
+                this.suggestResults = [];
+                this.geocoderResults.features = [];
+                this.cnf.subType = null;
             },
             searchFocus: function(e) {
+                this.cnf.subType = null;
                 if (this.query.length === 0) {
                     this.geocoderResults.features = this.saved.map((save, it) => {
                         return {
@@ -362,10 +374,10 @@ window.onload = () => {
                 window.open(this.url, '_newtab');
             },
             typeClick: function(e) {
-                debugger;
                 let searchType = e.target.value;
                 // this.cnf.typeToggle[type] = !this.cnf.typeToggle[type];
                 this.cnf.type = searchType;
+                this.cnf.subType = null;
                 this.searchClear();
             },
             typeClearAll: function(e) {
@@ -399,6 +411,7 @@ window.onload = () => {
             },
             catClick: function(e) {
                 this.query = e.target.getAttribute('type');
+                this.cnf.subType = 'search';
             },
 
             resultEnter: function(e) {
@@ -451,7 +464,16 @@ window.onload = () => {
                         }
                     }
                     xhr.send();
-                } else {
+                } 
+                else if(this.cnf.type === 'poi-category' && this.cnf.subType !== 'search') {
+                    // on selection of category type, update the query and search for nearby POIs of that type
+                    this.cnf.subType = 'search';
+                    
+                    const res = parseInt(e.target.getAttribute('result'));
+                    this.query = this.suggestResults[res].id;
+                    this.search();
+                }
+                else {
                     let res = parseInt(e.target.getAttribute('result'));
 
                     //Set query to saved result
