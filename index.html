@@ -36,7 +36,16 @@
   <div id='app' class='relative'>
     <div class='grid grid--gut12 py12 px12 bg-default'>
       <template v-if='cnf.type === "poi-category"'>
-        <div class="flex-buttons">
+        <div class='col col--4 relative'>
+          <div class='absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'>
+              <use href='#icon-search'></use>
+            </svg></div>
+          <input v-model='query' @focus='searchFocus' class='input bg-white px36' placeholder='Search'>
+          <div @click='searchClear' class='cursor-pointer absolute top right flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'>
+              <use href='#icon-close'></use>
+            </svg></div>
+        </div>
+        <div class="flex-buttons col col--4 relative">
           <button @click="catClick" :class="{ 'btn btn--white color-blue': query === 'restaurant' }" class='padding-button btn btn--default' type='restaurant'>
             <svg version="1.1"
                id="svg4619" inkscape:version="0.91 r" sodipodi:docname="restaurant-15.svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg"
@@ -231,8 +240,8 @@
     <!-- Search Results -->
     <div class='resultContainer clearfix'>
       <div class='results col5'>
-        <div class='resultsList'>
-          <div v-for="(res, res_it) res in (cnf.type === 'address' ? suggestResults : geocoderResults.features)" class="res clearfix" :result="res_it" @mouseenter="resultEnter" @mouseleave="resultLeave" @click="resultClick">
+        <div class='resultsList' v-if='query'>
+          <div v-for="(res, res_it) res in suggestResults" class="res clearfix" :result="res_it" @mouseenter="resultEnter" @mouseleave="resultLeave" @click="resultClick">
             <!-- <template v-if="res.id.toString().split('.')[0] == 'address'">
                                 <template v-if="res.id.split('.')[0] === '0'">
                                     <div class="resIcon" :result="res_it">
@@ -274,8 +283,8 @@
                                 <div class="resIcon maki" :result="res_it" :class="[ res.properties.maki ]"></div>
                             </template> -->
 
-            <div class="resultText" :result="res_it" v-text="cnf.type === 'address' ? res.matching_name : res.properties.place_name"></div>
-            <div class="resultSubText" :result="res_it" v-text="cnf.type === 'address' ? res.description : null"></div>
+            <div class="resultText" :result="res_it" v-text="res.name"></div>
+            <div class="resultSubText" :result="res_it" v-text="res.description"></div>
           </div>
         </div>
       </div>
