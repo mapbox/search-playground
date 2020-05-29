@@ -299,21 +299,20 @@ window.onload = () => {
                     url = `${this.credentials[env].poiUrl}/category/${subType}/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=20`;
                 } else if(this.cnf.type === 'unified') { 
-                    
                     url = `${this.credentials[env].unifiedSuggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
-                    if(this.action) {
-                        for(let key in this.action.query) {
-                            url = `${url}&${key}=${encodeURIComponent(this.action.query[key])}`;
-                        }
-                        this.action = null;
-                    } else {
+                    if(!this.action) {
                         url = `${url}&limit=20`;
-                        if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
-                        if (this.cnf.onLanguage && this.cnf.language) url = `${url}&language=${encodeURIComponent(this.cnf.language.code)}`;
-                        // if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
-                        // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
-                        // url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
                     }
+                }
+                if(this.action) {
+                    for(let key in this.action.query) {
+                        url = `${url}&${key}=${encodeURIComponent(this.action.query[key])}`;
+                    }
+                    this.action = null;
+                }
+                else{
+                    if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
+                    if (this.cnf.onLanguage && this.cnf.language) url = `${url}&language=${encodeURIComponent(this.cnf.language.code)}`;
                 }
 
                 this.url = url;
@@ -507,8 +506,7 @@ window.onload = () => {
                         xhr.open('GET', url);
                         xhr.onload = () => {
 
-                            this.geocoderResults.features.splice(0, this.geocoderResults.features.length); //Clear Results
-                            this.suggestResults.splice(0, this.suggestResults.length); //Clear Results
+                            this.geocoderResults.features = []; // clear results
     
                             if (xhr.status !== 200) {
                                 //TODO ERROR HANDLING
@@ -532,9 +530,6 @@ window.onload = () => {
                                     center: this.geocoderResults.features[0].geometry.coordinates,
                                     zoom: max
                                 });
-
-                                // resetting the query will trigger the results to display
-                                // this.query = this.geocoderResults.features[0].properties.place_name;
                             }
                         }
                         xhr.send();
