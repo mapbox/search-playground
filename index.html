@@ -35,7 +35,7 @@
 <body>
   <div id='app' class='relative'>
     <div class='grid grid--gut12 py12 px12 bg-default'>
-      <template v-if='cnf.type === "poi-category"'>
+      <template v-if='cnf.type === "poi-category" || cnf.type === "unified"'>
         <div class='col col--4 relative'>
           <div class='absolute flex-parent flex-parent--center-cross flex-parent--center-main w36 h36'><svg class='icon'>
               <use href='#icon-search'></use>
@@ -179,6 +179,10 @@
                   <label class="toggle-container">
                     <input :checked="cnf.type == 'poi-category'" name='toggle-1' @click="typeClick" type='radio' value="poi-category" />
                     <div class="toggle">POI Category</div>
+                  </label>
+                  <label class="toggle-container">
+                    <input :checked="cnf.type == 'unified'" name='toggle-1' @click="typeClick" type='radio' value="unified" />
+                    <div class="toggle">Unified Search</div>
                   </label>
                 </div>
               </div>

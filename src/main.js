@@ -15,6 +15,8 @@ window.onload = () => {
                     suggestUrl: 'https://search-federation-production.mapbox.com/api/v1/suggest',
                     retrieveUrl: 'https://search-federation-production.mapbox.com/api/v1/retrieve',
                     poiUrl: 'https://api-poi-search-production.mapbox.com',
+                    unifiedSuggestUrl: 'http://search-federation-staging.tilestream.net/search/v0.0/suggest',
+                    unifiedRetrieveUrl: 'http://search-federation-staging.tilestream.net/search/v0.0/retrieve',
                     key_federation: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g'
                 },
                 map: {
@@ -296,16 +298,25 @@ window.onload = () => {
                     const subType = this.cnf.subType === 'search' ? 'search' : 'suggest';
                     url = `${this.credentials[env].poiUrl}/category/${subType}/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=20`;
+                } else if(this.cnf.type === 'unified') { 
+                    
+                    url = `${this.credentials[env].unifiedSuggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
+                    if(this.action) {
+                        for(let key in this.action.query) {
+                            url = `${url}&${key}=${encodeURIComponent(this.action.query[key])}`;
+                        }
+                        this.action = null;
+                    } else {
+                        url = `${url}&limit=20`;
+                        if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
+                        if (this.cnf.onLanguage && this.cnf.language) url = `${url}&language=${encodeURIComponent(this.cnf.language.code)}`;
+                        // if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
+                        // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
+                        // url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
+                    }
                 }
-                // let url = `${this.credentials[env].suggestUrl}/${this.cnf.index}/${encodeURIComponent(this.query)}.json?access_token=${accessToken}&cachebuster=${(+new Date())}`;
-                // url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
-
-                if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
-                // if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
-                if (this.cnf.onLanguage && this.cnf.language) url = `${url}&language=${encodeURIComponent(this.cnf.language.code)}`;
 
                 this.url = url;
-
                 let xhr = new XMLHttpRequest();
                 xhr.open('GET', this.url);
                 xhr.onload = () => {
@@ -319,7 +330,7 @@ window.onload = () => {
                         if (xhr.status !== 200) {
                             //TODO ERROR HANDLING
                         } else {
-                            if (this.cnf.type === 'address') {
+                            if (this.cnf.type === 'address' || this.cnf.type === 'unified') {
                                 for (let sugg of JSON.parse(xhr.responseText)) {
                                     sugg.name = sugg.matching_name;
                                     this.suggestResults.push(sugg);
@@ -473,11 +484,67 @@ window.onload = () => {
                     this.query = this.suggestResults[res].id;
                     this.search();
                 }
+                else if(this.cnf.type === 'unified') {
+                    let res = parseInt(e.target.getAttribute('result'));
+                    let item = this.suggestResults[res];
+
+                    if (item.action.endpoint === 'suggest') {
+                        this.action = item.action;
+                        if(this.query == this.suggestResults[res].action.path) {
+                            this.search();
+                        } else {
+                            this.query = this.suggestResults[res].action.path
+                        }
+                    } 
+                    else if (item.action.endpoint === 'retrieve') {
+    
+                        let env = this.cnf.staging ? 'staging' : 'production';
+                        const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
+                        const  accessToken = this.credentials[env][tokenKey];
+    
+                        let url = `${this.credentials[env].unifiedRetrieveUrl}/${item.action.path}?access_token=${accessToken}`;
+                        let xhr = new XMLHttpRequest();
+                        xhr.open('GET', url);
+                        xhr.onload = () => {
+
+                            this.geocoderResults.features.splice(0, this.geocoderResults.features.length); //Clear Results
+                            this.suggestResults.splice(0, this.suggestResults.length); //Clear Results
+    
+                            if (xhr.status !== 200) {
+                                //TODO ERROR HANDLING
+                            } else {
+                                let feat = JSON.parse(xhr.responseText)[0].features[0];
+                                this.geocoderResults.features.push(feat);
+    
+                                this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[0]));
+    
+                                let type = this.geocoderResults.features[0].properties.place_type[0];
+    
+                                let max = 16;
+                                if (type === "street") max = 15;
+                                else if (type === "locality") max = 14;
+                                else if (type === "place" || type === "city") max = 13;
+                                else if (type === "district") max = 9;
+                                else if (type === "region") max = 6;
+                                else if (type === "country") max = 4;
+    
+                                this.map.jumpTo({
+                                    center: this.geocoderResults.features[0].geometry.coordinates,
+                                    zoom: max
+                                });
+
+                                // resetting the query will trigger the results to display
+                                // this.query = this.geocoderResults.features[0].properties.place_name;
+                            }
+                        }
+                        xhr.send();
+                    }
+                }
                 else {
                     let res = parseInt(e.target.getAttribute('result'));
 
                     //Set query to saved result
-                    if (this.geocoderResults.features[res].id === 'saved') {
+                    if (this.geocoderResults && this.geocoderResults.features[res].id === 'saved') {
                         this.query = this.geocoderResults.features[res].place_name;
                     } else {
                         this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[res]));
