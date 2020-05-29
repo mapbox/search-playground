@@ -15,8 +15,8 @@ window.onload = () => {
                     suggestUrl: 'https://search-federation-production.mapbox.com/api/v1/suggest',
                     retrieveUrl: 'https://search-federation-production.mapbox.com/api/v1/retrieve',
                     poiUrl: 'https://api-poi-search-production.mapbox.com',
-                    unifiedSuggestUrl: 'http://search-federation-staging.tilestream.net/search/v0.0/suggest',
-                    unifiedRetrieveUrl: 'http://search-federation-staging.tilestream.net/search/v0.0/retrieve',
+                    unifiedSuggestUrl: 'https://search-federation-production.mapbox.com/search/v0.0/suggest',
+                    unifiedRetrieveUrl: 'https://search-federation-production.mapbox.com/search/v0.0/retrieve',
                     key_federation: 'pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g'
                 },
                 map: {
