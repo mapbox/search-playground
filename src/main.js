@@ -12,8 +12,6 @@ window.onload = () => {
         data: {
             credentials: {
                 production: {
-                    suggestUrl: 'https://search-federation-production.mapbox.com/api/v1/suggest',
-                    retrieveUrl: 'https://search-federation-production.mapbox.com/api/v1/retrieve',
                     poiUrl: 'https://api-poi-search-production.mapbox.com',
                     unifiedSuggestUrl: 'https://search-federation-production.mapbox.com/search/v0.0/suggest',
                     unifiedRetrieveUrl: 'https://search-federation-production.mapbox.com/search/v0.0/retrieve',
@@ -289,7 +287,7 @@ window.onload = () => {
                 let url = '';
 
                 if(this.cnf.type === 'address') {
-                    url = `${this.credentials[env].suggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
+                    url = `${this.credentials[env].unifiedSuggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}&types=address,street`;
                     url = `${url}&limit=5`;
                 } else if(this.cnf.type === 'poi-search') {
                     url = `${this.credentials[env].poiUrl}/poi/search/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
@@ -432,50 +430,7 @@ window.onload = () => {
                 this.clearMarkers('hovered');
             },
             resultClick: function(e) {
-                if(this.cnf.type === 'address') {
-                    let res = parseInt(e.target.getAttribute('result'));
-                    let queryId = this.suggestResults[res].id;
-
-                    let env = this.cnf.staging ? 'staging' : 'production';
-                    const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
-                    const  accessToken = this.credentials[env][tokenKey];
-
-                    let url = `${this.credentials[env].retrieveUrl}/${queryId}?access_token=${accessToken}`;
-                    let xhr = new XMLHttpRequest();
-                    xhr.open('GET', url);
-                    xhr.onload = () => {
-                        this.geocoderResults.features.splice(0, this.geocoderResults.features.length); //Clear Results
-                        this.suggestResults.splice(0, this.suggestResults.length); //Clear Results
-
-                        if (xhr.status !== 200) {
-                            //TODO ERROR HANDLING
-                        } else {
-                            let feat = JSON.parse(xhr.responseText)[0].features[0];
-                            this.geocoderResults.features.push(feat);
-
-                            this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[0]));
-
-                            let type = this.geocoderResults.features[0].properties.place_type[0];
-
-                            let max = 16;
-                            if (type === "street") max = 15;
-                            else if (type === "locality") max = 14;
-                            else if (type === "place" || type === "city") max = 13;
-                            else if (type === "district") max = 9;
-                            else if (type === "region") max = 6;
-                            else if (type === "country") max = 4;
-
-                            this.map.jumpTo({
-                                center: this.geocoderResults.features[0].geometry.coordinates,
-                                zoom: max
-                            });
-
-                            this.query = this.geocoderResults.features[0].properties.place_name;
-                        }
-                    }
-                    xhr.send();
-                } 
-                else if(this.cnf.type === 'poi-category' && this.cnf.subType !== 'search') {
+                if(this.cnf.type === 'poi-category' && this.cnf.subType !== 'search') {
                     // on selection of category type, update the query and search for nearby POIs of that type
                     this.cnf.subType = 'search';
                     
@@ -483,7 +438,7 @@ window.onload = () => {
                     this.query = this.suggestResults[res].id;
                     this.search();
                 }
-                else if(this.cnf.type === 'unified') {
+                else if(this.cnf.type === 'address' || this.cnf.type === 'unified') {
                     let res = parseInt(e.target.getAttribute('result'));
                     let item = this.suggestResults[res];
 
