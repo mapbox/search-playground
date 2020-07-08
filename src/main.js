@@ -296,7 +296,7 @@ window.onload = () => {
                     const subType = this.cnf.subType === 'search' ? 'search' : 'suggest';
                     url = `${this.credentials[env].poiUrl}/category/${subType}/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     url = `${url}&limit=20`;
-                } else if(this.cnf.type === 'unified') { 
+                } else if(this.cnf.type === 'unified') {
                     url = `${this.credentials[env].unifiedSuggestUrl}/${encodeURIComponent(this.query)}?access_token=${accessToken}`;
                     if(!this.action) {
                         url = `${url}&limit=20`;
@@ -328,7 +328,7 @@ window.onload = () => {
                             //TODO ERROR HANDLING
                         } else {
                             if (this.cnf.type === 'address' || this.cnf.type === 'unified') {
-                                for (let sugg of JSON.parse(xhr.responseText)) {
+                                for (let sugg of JSON.parse(xhr.responseText).suggestions) {
                                     sugg.name = sugg.matching_name;
                                     this.suggestResults.push(sugg);
                                 }
@@ -433,7 +433,7 @@ window.onload = () => {
                 if(this.cnf.type === 'poi-category' && this.cnf.subType !== 'search') {
                     // on selection of category type, update the query and search for nearby POIs of that type
                     this.cnf.subType = 'search';
-                    
+
                     const res = parseInt(e.target.getAttribute('result'));
                     this.query = this.suggestResults[res].id;
                     this.search();
@@ -449,30 +449,30 @@ window.onload = () => {
                         } else {
                             this.query = this.suggestResults[res].action.path
                         }
-                    } 
+                    }
                     else if (item.action.endpoint === 'retrieve') {
-    
+
                         let env = this.cnf.staging ? 'staging' : 'production';
                         const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
                         const  accessToken = this.credentials[env][tokenKey];
-    
+
                         let url = `${this.credentials[env].unifiedRetrieveUrl}/${item.action.path}?access_token=${accessToken}`;
                         let xhr = new XMLHttpRequest();
                         xhr.open('GET', url);
                         xhr.onload = () => {
 
                             this.geocoderResults.features = []; // clear results
-    
+
                             if (xhr.status !== 200) {
                                 //TODO ERROR HANDLING
                             } else {
                                 let feat = JSON.parse(xhr.responseText)[0].features[0];
                                 this.geocoderResults.features.push(feat);
-    
+
                                 this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[0]));
-    
+
                                 let type = this.geocoderResults.features[0].properties.place_type[0];
-    
+
                                 let max = 16;
                                 if (type === "street") max = 15;
                                 else if (type === "locality") max = 14;
@@ -480,7 +480,7 @@ window.onload = () => {
                                 else if (type === "district") max = 9;
                                 else if (type === "region") max = 6;
                                 else if (type === "country") max = 4;
-    
+
                                 this.map.jumpTo({
                                     center: this.geocoderResults.features[0].geometry.coordinates,
                                     zoom: max
