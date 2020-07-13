@@ -324,7 +324,7 @@ window.onload = () => {
                         this.geocoderResults.features = []; //Clear Results
                         this.suggestResults = []; //Clear Results
 
-                        if (xhr.status !== 200) {
+                        if (xhr.status < 200 || xhr.status > 299) {
                             //TODO ERROR HANDLING
                         } else {
                             if (this.cnf.type === 'address' || this.cnf.type === 'unified') {
@@ -463,7 +463,7 @@ window.onload = () => {
 
                             this.geocoderResults.features = []; // clear results
 
-                            if (xhr.status !== 200) {
+                            if (xhr.status < 200 || xhr.status > 299) {
                                 //TODO ERROR HANDLING
                             } else {
                                 let feat = JSON.parse(xhr.responseText)[0].features[0];
