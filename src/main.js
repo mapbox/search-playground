@@ -442,15 +442,31 @@ window.onload = () => {
                     let res = parseInt(e.target.getAttribute('result'));
                     let item = this.suggestResults[res];
 
-                    if (item.action.endpoint === 'suggest') {
+                    if (!item.action) {
+                        let type = item.properties.place_type[0];
+
+                        let max = 16;
+                        if (type === "street") max = 15;
+                        else if (type === "locality") max = 14;
+                        else if (type === "place" || type === "city") max = 13;
+                        else if (type === "district") max = 9;
+                        else if (type === "region") max = 6;
+                        else if (type === "country") max = 4;
+
+                        this.map.jumpTo({
+                            center: item.geometry.coordinates,
+                            zoom: max
+                        });
+                    }
+                    else if (item.action.endpoint === 'suggest') {
                         this.action = item.action;
-                        if(this.query == this.suggestResults[res].action.path) {
+                        if(this.query === this.suggestResults[res].action.path) {
                             this.search();
                         } else {
                             this.query = this.suggestResults[res].action.path
                         }
                     }
-                    else if (item.action.endpoint === 'retrieve') {
+                    else if (item.action.endpoint === 'retrieve' ) {
 
                         let env = this.cnf.staging ? 'staging' : 'production';
                         const tokenKey = this.cnf.localsearch ?  'key_hiero_federation' : 'key_federation';
@@ -462,29 +478,43 @@ window.onload = () => {
                         xhr.onload = () => {
 
                             this.geocoderResults.features = []; // clear results
+                            this.suggestResults = []; // clear results
 
                             if (xhr.status < 200 || xhr.status > 299) {
                                 //TODO ERROR HANDLING
                             } else {
-                                let feat = JSON.parse(xhr.responseText)[0].features[0];
-                                this.geocoderResults.features.push(feat);
+                                for (let feat of JSON.parse(xhr.responseText).features) {
+                                    this.geocoderResults.features.push(feat);
+                                    feat.name = feat.properties.place_name;
+                                    feat.id = feat.properties.id;
+                                    this.suggestResults.push(feat);
+                                }
 
-                                this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features[0]));
+                                this.setMarkers('selected', this.toFeatureCollection(this.geocoderResults.features));
 
-                                let type = this.geocoderResults.features[0].properties.place_type[0];
+                                // If single result, jump to
+                                if (this.geocoderResults.length === 1) {
+                                    let type = this.geocoderResults.features[0].properties.place_type[0];
 
-                                let max = 16;
-                                if (type === "street") max = 15;
-                                else if (type === "locality") max = 14;
-                                else if (type === "place" || type === "city") max = 13;
-                                else if (type === "district") max = 9;
-                                else if (type === "region") max = 6;
-                                else if (type === "country") max = 4;
+                                    let max = 16;
+                                    if (type === "street") max = 15;
+                                    else if (type === "locality") max = 14;
+                                    else if (type === "place" || type === "city") max = 13;
+                                    else if (type === "district") max = 9;
+                                    else if (type === "region") max = 6;
+                                    else if (type === "country") max = 4;
 
-                                this.map.jumpTo({
-                                    center: this.geocoderResults.features[0].geometry.coordinates,
-                                    zoom: max
-                                });
+                                    this.map.jumpTo({
+                                        center: this.geocoderResults.features[0].geometry.coordinates,
+                                        zoom: max
+                                    });
+
+                                } else {
+                                    this.map.fitBounds(turf.bbox(this.geocoderResults), {
+                                        animate: false,
+                                        padding: 250
+                                    });
+                                }
                             }
                         }
                         xhr.send();
