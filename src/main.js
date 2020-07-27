@@ -49,6 +49,12 @@ window.onload = () => {
             // Results from querying vector tiles
             vtQueryResults: { type: 'FeatureCollection', features: [] },
             countries: [],
+            worldviews: [
+                { code: 'cn', name: 'China' },
+                { code: 'in', name: 'India' },
+                { code: 'jp', name: 'Japan' },
+                { code: 'us', name: 'US (De facto)' }
+            ],
             languages: [
                 { code: 'ar', name: 'Arabic' },
                 { code: 'az', name: 'Azerbaijani' },
@@ -119,12 +125,14 @@ window.onload = () => {
                 approx: true,
                 staging: false,
                 onCountry: true,
+                onWorldview: true,
                 onType: true,
                 onProximity: true,
                 onBBOX: true,
                 onLimit: true,
                 onLanguage: true,
                 countries: [],
+                worldviews: [],
                 proximity: '',
                 typeToggle: {
                     'country': false,
@@ -298,6 +306,8 @@ window.onload = () => {
             'cnf.approx': function() { return this.search(); },
             'cnf.onCountry': function() { return this.search(); },
             'cnf.countries': function() { return this.search(); },
+            'cnf.onWorldview': function() { return this.search(); },
+            'cnf.worldviews': function() { return this.search(); },
             'cnf.onType': function() { return this.search(); },
             'cnf.types': function() { return this.search(); },
             'cnf.onProximity': function() { return this.search(); },
@@ -344,6 +354,21 @@ window.onload = () => {
                                 name: country.toUpperCase(),
                                 code: country
                             });
+                        });
+                    } else if (entry[0] === 'worldview') {
+                        entry[1].split(',').map((wView) => {
+                            return wView.toLowerCase();
+                        }).forEach((wView) => {
+                            let found_wv;
+                            for (let l of this.worldviews) {
+                                if (l.code === wView) found_wv = l;
+                            }
+
+                            if (found_wv) {
+                                this.cnf.worldviews.push(found_wv);
+                            } else {
+                                this.cnf.worldviews.push({ name: wView, code: wView });
+                            }
                         });
                     } else if (entry[0] === 'bbox') {
                         this.cnf.bbox = entry[1];
@@ -574,6 +599,7 @@ window.onload = () => {
                 url = `${url}&autocomplete=${this.cnf.autocomplete ? 'true' : 'false'}`;
 
                 if (this.cnf.onCountry && this.cnf.countries.length) url = `${url}&country=${encodeURIComponent(this.cnf.countries.map((country) => { return country.code }).join(','))}`;
+                if (this.cnf.onWorldview && this.cnf.worldviews.length) url = `${url}&worldview=${encodeURIComponent(this.cnf.worldviews.map((wView) => { return wView.code }).join(','))}`;
                 if (this.cnf.onType && this.cnf.types.length) url = `${url}&types=${encodeURIComponent(this.cnf.types)}`;
                 if (this.cnf.onProximity && this.cnf.proximity) url = `${url}&proximity=${encodeURIComponent(this.cnf.proximity)}`;
                 if (this.cnf.onBBOX && this.cnf.bbox) url = `${url}&bbox=${encodeURIComponent(this.cnf.bbox)}`;
