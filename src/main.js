@@ -445,13 +445,7 @@ window.onload = () => {
                     if (!item.action) {
                         let type = item.properties.place_type[0];
 
-                        let max = 16;
-                        if (type === "street") max = 15;
-                        else if (type === "locality") max = 14;
-                        else if (type === "place" || type === "city") max = 13;
-                        else if (type === "district") max = 9;
-                        else if (type === "region") max = 6;
-                        else if (type === "country") max = 4;
+                        let max = this.maxZoom(type);
 
                         this.map.jumpTo({
                             center: item.geometry.coordinates,
@@ -496,13 +490,7 @@ window.onload = () => {
                                 if (this.geocoderResults.length === 1) {
                                     let type = this.geocoderResults.features[0].properties.place_type[0];
 
-                                    let max = 16;
-                                    if (type === "street") max = 15;
-                                    else if (type === "locality") max = 14;
-                                    else if (type === "place" || type === "city") max = 13;
-                                    else if (type === "district") max = 9;
-                                    else if (type === "region") max = 6;
-                                    else if (type === "country") max = 4;
+                                    let max = this.maxZoom(type);
 
                                     this.map.jumpTo({
                                         center: this.geocoderResults.features[0].geometry.coordinates,
@@ -569,6 +557,17 @@ window.onload = () => {
                 } else {
                     return turf.featureCollection([feature]);
                 }
+            },
+            maxZoom: function(type) {
+                let max = 16;
+                if (type === "street") max = 15;
+                else if (type === "locality") max = 14;
+                else if (type === "place" || type === "city") max = 13;
+                else if (type === "district") max = 9;
+                else if (type === "region") max = 6;
+                else if (type === "country") max = 4;
+
+                return max;
             }
         }
     });
