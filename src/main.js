@@ -151,6 +151,7 @@ window.onload = () => {
                 autocomplete: true,
                 languages: [],
                 languageStrict: false,
+                reverseModeScore: false,
                 onDebug: false,
                 selectedLayer: '',
                 debugClick: {},
@@ -209,6 +210,7 @@ window.onload = () => {
                     displayControlsDefault: false
                 });
                 this.map.on('style.load', () => {
+                    this.map.showTileBoundaries = 'true';
                     this.map.addSource('markers', { type: 'geojson', data: this.geocoderResults });
                     this.map.addSource('bbox', { type: 'geojson', data: this.bbox });
 
@@ -318,6 +320,7 @@ window.onload = () => {
             'cnf.limit': function() { return this.search(); },
             'cnf.autocomplete': function() { return this.search(); },
             'cnf.onLanguage': function() { return this.search(); },
+            'cnf.reverseModeScore': function() { return this.search(); },
             'cnf.languages': function() { return this.search(); },
             'cnf.languageStrict': function() { return this.search(); },
             'cnf.routing': function() { return this.search(); },
@@ -393,6 +396,8 @@ window.onload = () => {
                         });
                     } else if (entry[0] === 'languageMode' && entry[1] === 'strict') {
                         this.cnf.languageStrict = true;
+                    } else if (entry[0] === 'reverseMode' && entry[1] === 'score') {
+                        this.cnf.reverseModeScore = true;
                     }
                 }
 
@@ -606,6 +611,7 @@ window.onload = () => {
                 if (this.cnf.onLimit && this.cnf.limit !== '') url = `${url}&limit=${encodeURIComponent(this.cnf.limit)}`;
                 if (this.cnf.onLanguage && this.cnf.languages.length) url = `${url}&language=${encodeURIComponent(this.cnf.languages.map((lang) => { return lang.code }).join(','))}`;
                 if (this.cnf.languageStrict) url = `${url}&languageMode=strict`;
+                if (this.cnf.reverseModeScore) url = `${url}&reverseMode=score`;
                 if (this.cnf.routing) url = `${url}&routing=true`;
                 if (!this.cnf.approx) url = `${url}&services=hiero`;
 

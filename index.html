@@ -245,6 +245,17 @@
                             </div>
                         </div>
 
+                        <!--ReverseMode Score Toggle-->
+                        <div class='col col--12'>
+                            <div class="col col--12 py12">
+                                <label class='switch-container fl pr12'>
+                                    <input v-model="cnf.reverseModeScore" type='checkbox'/>
+                                    <div class='switch'></div>
+                                </label>
+                                <h3 class='txt-h4'>ReverseMode Score <svg @click="help()" class='fr ml12 icon cursor-pointer color-gray-light color-gray-dark-on-hover'><use href='#icon-info'/></svg></h3>
+                            </div>
+                        </div>
+
                         <!--Debug mode-->
                         <!-- Only visible once temporary token has been retrieved -->
                         <div class='col col--12' v-if="credentials.debug.authed">
